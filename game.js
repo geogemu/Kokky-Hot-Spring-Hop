@@ -88,10 +88,8 @@ let steamX = 0;
 
 let hopSteam = [];
 
-let unlockedRanks = [];
 let banner = null;
-let lastBannerScore = null;
-
+let lastRankShown = null;
 
 
 /* ===== PLAYER SETTER ===== */
@@ -123,19 +121,6 @@ const RANKS = [
   { score: 1000, name: "Onsen God" }
 ];
 
-// 🔧 TEST SWITCH
-const TEST_RANK_MODE = true;
-
-
-/* =====================================================
-   TEST RANKS
-===================================================== */
-
-function getTestRankName(score) {
-  // simulate rank progression every 5 points
-  const index = Math.floor(score / 5) - 1;
-  return RANKS[index]?.name || "Onsen Rookie";
-}
 
 /* =====================================================
    PLAYER SELECT OVERLAY CONTROL
@@ -491,37 +476,9 @@ function drawObstacle(obs) {
 
 
 function checkRankUnlock() {
-
-  // ===== TEST MODE =====
-  if (TEST_RANK_MODE) {
-    if (score > 0 && score % 5 === 0) {
-
-      if (banner || lastBannerScore === score) return;
-      lastBannerScore = score;
-
-      banner = {
-        text: getTestRankName(score),
-        y: -60,
-        life: 180,
-        alpha: 1,
-
-        // static sparkles (no movement)
-        sparkles: Array.from({ length: 10 }, () => ({
-          x: Math.random(),
-          y: Math.random(),
-          r: Math.random() * 1.8 + 0.8,
-          a: Math.random() * 0.4 + 0.4,
-          pulse: Math.random() * Math.PI * 2
-        }))
-      };
-    }
-    return;
-  }
-
-  // ===== REAL RANK MODE =====
   for (const r of RANKS) {
-    if (score >= r.score && !unlockedRanks.includes(r.score)) {
-      unlockedRanks.push(r.score);
+    if (score >= r.score && lastRankShown !== r.score) {
+      lastRankShown = r.score;
 
       banner = {
         text: r.name,
@@ -535,7 +492,6 @@ function checkRankUnlock() {
     }
   }
 }
-
 
 
 /* =====================================================
@@ -698,8 +654,8 @@ function drawBanner() {
     banner.alpha = banner.life / 60;
   }
 
-  const cardW = 240;
-  const cardH = 110;
+  const cardW = 260;
+  const cardH = 64;
   const x = (W - cardW) / 2;
   const y = banner.y;
 
@@ -721,7 +677,7 @@ function drawBanner() {
   grad.addColorStop(1, "#d6a94d");
 
   ctx.fillStyle = grad;
-  roundRect(ctx, x, y, cardW, cardH, 18);
+  roundRect(ctx, x, y, cardW, cardH, 14);
   ctx.fill();
 
   // remove glow for text & sparkles
@@ -732,18 +688,12 @@ function drawBanner() {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  ctx.font = "20px Handjet";
-  ctx.fillText(
-    "Rank Up:",
-    W / 2,
-    y + 42
-  );
+  ctx.font = "18px Handjet";
+ctx.fillText("Rank Up", W / 2, y + 26);
 
-  ctx.font = "26px Handjet";
-  ctx.fillText(
-    `${banner.text}!`,
-    W / 2,
-    y + 72
+ctx.font = "24px Handjet";
+ctx.fillText(banner.text, W / 2, y + 46);
+
   );
 
 // === STATIC SPARKLES (ELEGANT GLOW) ===
