@@ -139,57 +139,54 @@ body {
 /* ===== TOP UI ===== */
 #topBar {
   width: 100%;
-  max-width: 520px;
+  max-width: 480px;
   padding: 4px 8px 2px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-#scoreboardLink {
+#scoreboardLink,
+#changePlayerBtn {
   text-decoration: none;
-  background: #ffffff;
-  color: #050814;
-  padding: 8px 14px;
+  border: none;
   border-radius: 10px;
-  font-size: 1rem;
-  min-height: 40px;
-  min-width: 120px;
+  font-family: "Handjet", sans-serif;
+  font-size: 0.9rem;
+  padding: 6px 10px;
+  min-height: 32px;
+  min-width: 96px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
+}
+
+#scoreboardLink {
+  background: #ffffff;
+  color: #050814;
+}
+
+#changePlayerBtn {
+  background: #ff6b8b;
+  color: #150818;
+  cursor: pointer;
 }
 
 #playerBox {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 #playerIdLabel {
   font-weight: 700;
 }
 
-#changePlayerBtn {
-  font-family: "Handjet", sans-serif;
-  background: #ff6b8b;
-  border: none;
-  color: #150818;
-  padding: 8px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  min-height: 34px;
-  min-width: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 #scoreRow {
   width: 100%;
-  max-width: 520px;
+  max-width: 480px;
   padding: 0 8px 4px;
   text-align: center;
   font-size: 1.05rem;
