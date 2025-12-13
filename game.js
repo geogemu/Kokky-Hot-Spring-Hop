@@ -113,7 +113,24 @@ playBtn.addEventListener("click", () => {
   localStorage.setItem("playerId", pid);
   hasPlayer = true;
   overlay.classList.add("hidden");
+
+const scoreEl = document.getElementById("score");
+const bestEl = document.getElementById("best");
+const playerIdLabel = document.getElementById("playerIdLabel");
+const changePlayerBtn = document.getElementById("changePlayerBtn");
+
+playerIdLabel.textContent = "Player: " + pid;
+   
 });
+
+/* =====================================================
+   CHANGE BUTTON
+===================================================== */
+changePlayerBtn.addEventListener("click", () => {
+  overlay.classList.remove("hidden");
+  hasPlayer = false;
+});
+
 
 /* =====================================================
    GAME CONSTANTS (LOCKED)
@@ -435,12 +452,14 @@ function loop() {
       const hitsTop = hitBox.y < obs.gapY;
       const hitsBottom = (hitBox.y + hitBox.h) > (obs.gapY + GAP);
       if (hitsTop || hitsBottom) gameOver = true;
+       saveScore();
     }
   }
 
   // floor/ceiling freeze
   if (!gameOver && hasPlayer) {
     if (player.y < 0 || player.y + player.h > H) gameOver = true;
+     saveScore();
   }
 
   // mountains + steam (draw after obstacles? mountains should be behind obstacles)
@@ -497,7 +516,38 @@ function loop() {
   ctx.textAlign = "center";
   ctx.fillText(`Score: ${score}  Best: ${bestScore}`, W / 2, 30);
 
+   // TOP UI (HTML)
+scoreEl.textContent = "Score: " + score;
+bestEl.textContent = "Best: " + bestScore;
+   
   requestAnimationFrame(loop);
+
 }
 
 loop();
+
+function saveScore() {
+  const playerId = localStorage.getItem("playerId");
+  if (!playerId) return;
+
+  let board = JSON.parse(localStorage.getItem("scoreboard") || "[]");
+
+  const rank = "—"; // rank system comes later
+
+  const existing = board.find(e => e.id === playerId);
+
+  if (existing) {
+    if (score > existing.score) {
+      existing.score = score;
+      existing.rank = rank;
+    }
+  } else {
+    board.push({
+      id: playerId,
+      score: score,
+      rank: rank
+    });
+  }
+
+  localStorage.setItem("scoreboard", JSON.stringify(board));
+}
