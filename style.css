@@ -1,78 +1,135 @@
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
   height: 100%;
   overflow: hidden;
+}
+
+body {
   background: #02040b;
-  font-family: 'Handjet', sans-serif;
+  font-family: "Handjet", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-canvas {
+/* Canvas */
+#game {
   display: block;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 2 / 3;
+  touch-action: manipulation;
 }
 
-/* Modal */
-.modal {
+/* =====================
+   PLAYER OVERLAY
+===================== */
+.overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.65);
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 10;
+  align-items: center;
+  z-index: 20;
 }
 
-.modal-box {
-  background: #02040b;
-  border-radius: 16px;
-  padding: 20px;
+.playerBox {
   width: 90%;
   max-width: 420px;
+  background: #121428;
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.8);
+  color: #f4f4ff;
   text-align: center;
-  color: white;
 }
 
-.modal h2 {
-  font-weight: normal;
-  font-size: 28px;
-  margin-bottom: 12px;
+.playerBox h2 {
+  margin: 0 0 12px;
+  font-size: 1.4rem;
 }
 
-/* Buttons */
-.button-row {
-  display: flex;
-  flex-wrap: wrap;
+/* Team grid */
+.teamGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  justify-content: center;
   margin-bottom: 12px;
 }
 
-button {
-  font-family: 'Handjet', sans-serif;
-  font-size: 20px;
-  padding: 8px 16px;
-  border-radius: 12px;
+.teamBtn {
   border: none;
+  border-radius: 12px;
+  padding: 10px 6px;
+  font-family: "Handjet", sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  background: #2a2c4a;
+  color: #fff;
+}
+
+.teamBtn.selected {
+  outline: 3px solid #ff6b8b;
+}
+
+/* Color hints */
+.teamBtn.white { background: #e8e8f0; color: #111; }
+.teamBtn.red   { background: #ff6b6b; }
+.teamBtn.green { background: #5fcf9b; color:#0c2b1e; }
+.teamBtn.blue  { background: #5aa8ff; }
+
+.teamBtn.guest { background: #3b3f66; }
+.teamBtn.admin { background: #2d2f4f; }
+
+/* ID section */
+.sectionTitle {
+  margin: 10px 0 6px;
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+#idList {
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+#idList button {
+  width: 100%;
+  margin-bottom: 6px;
+  padding: 8px;
+  border-radius: 10px;
+  border: none;
+  background: #1c1f3a;
+  color: #fff;
+  font-family: "Handjet", sans-serif;
   cursor: pointer;
 }
 
-.confirm {
-  background: #ff7aa2;
-  color: black;
+#idList button.selected {
+  background: #ff6b8b;
+  color: #150818;
 }
 
-/* Dropdown styled like game UI */
-select {
-  background: #02040b;
-  color: white;
-  font-family: 'Handjet', sans-serif;
-  font-size: 20px;
-  padding: 8px 14px;
-  border-radius: 12px;
-  border: 2px solid #ffffff33;
+/* Preview */
+#playerPreview {
+  margin-top: 8px;
+  font-size: 1.1rem;
+}
+
+/* Play button */
+.playBtn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 12px;
+  font-size: 1.2rem;
+  border-radius: 14px;
+  border: none;
+  background: #ff6b8b;
+  color: #150818;
+  font-family: "Handjet", sans-serif;
+  cursor: pointer;
 }
 
 /* Utility */
