@@ -77,6 +77,11 @@ function showOverlayIfNeeded() {
 }
 showOverlayIfNeeded();
 
+const savedPlayer = localStorage.getItem("playerId");
+if (savedPlayer) {
+  playerIdLabel.textContent = "Player: " + savedPlayer;
+}
+
 teamButtons.forEach(btn => {
   btn.addEventListener("click", () => {
     teamButtons.forEach(b => b.classList.remove("selected"));
@@ -118,11 +123,6 @@ playBtn.addEventListener("click", () => {
   localStorage.setItem("playerId", pid);
   hasPlayer = true;
   overlay.classList.add("hidden");
-
-const scoreEl = document.getElementById("score");
-const bestEl = document.getElementById("best");
-const playerIdLabel = document.getElementById("playerIdLabel");
-const changePlayerBtn = document.getElementById("changePlayerBtn");
 
 playerIdLabel.textContent = "Player: " + pid;
    
