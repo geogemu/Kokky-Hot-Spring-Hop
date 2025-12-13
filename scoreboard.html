@@ -69,6 +69,18 @@ body {
   border: 2px solid rgba(255,255,255,0.2);
   position: relative;
   z-index: 2;
+  overflow: hidden;
+}
+
+  .tableWrap {
+  max-height: 55vh;          /* controls how tall the table can be */
+  overflow-y: auto;          /* ENABLE SCROLL */
+  margin-top: 20px;
+}
+
+/* nicer scrolling on iOS */
+.tableWrap {
+  -webkit-overflow-scrolling: touch;
 }
 
 h1 {
@@ -86,7 +98,7 @@ h1 {
 
 table {
   width: 100%;
-  margin-top: 25px;
+  margin-top: 0;   /* IMPORTANT */
   border-collapse: collapse;
   font-size: 1.3rem;
 }
@@ -114,7 +126,9 @@ td {
   border: none;
   cursor: pointer;
   font-family: "Handjet", sans-serif;
+
 }
+  
 </style>
 </head>
 
@@ -129,6 +143,7 @@ td {
       Your scores are also saved to an overall scoreboard online.
     </div>
 
+ <div class="tableWrap">
     <table id="scoreTable">
       <thead>
         <tr>
@@ -140,7 +155,8 @@ td {
       </thead>
       <tbody></tbody>
     </table>
-
+ </div>
+   
     <button class="backBtn" onclick="window.location.href='index.html'">
       Back to Game
     </button>
