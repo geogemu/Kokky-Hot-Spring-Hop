@@ -694,7 +694,6 @@ ctx.fillText("Rank Up", W / 2, y + 26);
 ctx.font = "24px Handjet";
 ctx.fillText(banner.text, W / 2, y + 46);
 
-  );
 
 // === STATIC SPARKLES (ELEGANT GLOW) ===
 banner.sparkles.forEach(s => {
