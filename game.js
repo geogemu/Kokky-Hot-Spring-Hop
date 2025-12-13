@@ -99,12 +99,6 @@ function setPlayer(playerId) {
    
 }
 
-// restore player on reload (label + best score)
-const savedPlayer = localStorage.getItem("playerId");
-if (savedPlayer) {
-  setPlayer(savedPlayer);
-}
-
 /* =====================================================
    PLAYER SELECT OVERLAY CONTROL
 ===================================================== */
