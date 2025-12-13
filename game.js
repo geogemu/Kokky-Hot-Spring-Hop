@@ -67,14 +67,19 @@ const TEAM_IDS = {
 };
 
 function showOverlayIfNeeded() {
-  hasPlayer = false;
-  overlay.classList.remove("hidden");
+  const saved = localStorage.getItem("playerId");
+
+  if (saved) {
+    hasPlayer = true;
+    overlay.classList.add("hidden");
+    playerIdLabel.textContent = "Player: " + saved;
+  } else {
+    hasPlayer = false;
+    overlay.classList.remove("hidden");
+  }
 }
 
 showOverlayIfNeeded();
-
-// Do NOT set playerIdLabel here anymore
-// It will be set only after Play! is pressed
 
 
 teamButtons.forEach(btn => {
@@ -104,7 +109,13 @@ teamButtons.forEach(btn => {
         b.classList.add("selected");
 
         selectedId = id;
-        preview.textContent = (selectedTeam === "Guest") ? "Guest" : `${selectedTeam}-${id}`;
+        if (selectedTeam === "Guest") {
+  preview.textContent = "Guest";
+} else if (id === "A" || id === "B") {
+  preview.textContent = `${selectedTeam}-${id} (ALT)`;
+} else {
+  preview.textContent = `${selectedTeam}-${id}`;
+}
         playBtn.classList.remove("hidden");
       });
 
@@ -392,6 +403,10 @@ function drawObstacle(obs) {
    MAIN LOOP
 ===================================================== */
 function loop() {
+   if (!hasPlayer) {
+  requestAnimationFrame(loop);
+  return;
+}
   const W = gameWidth();
   const H = gameHeight();
 
