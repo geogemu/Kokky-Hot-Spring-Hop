@@ -2,7 +2,7 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 /* ===============================
-   VIRTUAL SCREEN (PHONE SIZE)
+   VIRTUAL SCREEN
 ================================ */
 const VIRTUAL_WIDTH = 390;
 const VIRTUAL_HEIGHT = 844;
@@ -47,11 +47,9 @@ const teamData = {
 
 teamButtons.addEventListener("click", e => {
   if (!e.target.dataset.team) return;
-
   selectedTeam = e.target.dataset.team;
   selectedId = null;
   confirmBtn.disabled = true;
-
   idSelect.innerHTML = `<option value="">Select</option>`;
   selectRow.classList.remove("hidden");
 
@@ -62,11 +60,7 @@ teamButtons.addEventListener("click", e => {
     addOption("S", "S");
   } else {
     teamData[selectedTeam].forEach(id => {
-      if (id === "A" || id === "B") {
-        addOption(id, `${id} (ALT)`);
-      } else {
-        addOption(id, id);
-      }
+      addOption(id, id === "A" || id === "B" ? `${id} (ALT)` : id);
     });
   }
 });
@@ -84,23 +78,25 @@ idSelect.addEventListener("change", () => {
 });
 
 confirmBtn.onclick = () => {
-  const playerId =
-    selectedTeam === "Guest"
-      ? "Guest"
-      : `${selectedTeam}-${selectedId}`;
-
-  localStorage.setItem("playerId", playerId);
+  const pid = selectedTeam === "Guest" ? "Guest" : `${selectedTeam}-${selectedId}`;
+  localStorage.setItem("playerId", pid);
   modal.style.display = "none";
 };
 
 /* ===============================
-   GAME ASSETS
+   ASSETS
 ================================ */
 const kokkyImg = new Image();
 kokkyImg.src = "kokky.png";
 
 const woodImg = new Image();
 woodImg.src = "wood.png";
+
+const mountainsImg = new Image();
+mountainsImg.src = "mountains.png";
+
+const steamImg = new Image();
+steamImg.src = "steam.png";
 
 /* ===============================
    PLAYER
@@ -127,9 +123,10 @@ const SPAWN_DISTANCE = 270;
 let spawnX = 0;
 
 /* ===============================
-   GAME STATE
+   STATE
 ================================ */
 let started = false;
+let gameOver = false;
 let score = 0;
 let bestScore = Number(localStorage.getItem("bestScore")) || 0;
 
@@ -139,17 +136,23 @@ let bestScore = Number(localStorage.getItem("bestScore")) || 0;
 function jump() {
   if (!localStorage.getItem("playerId")) return;
 
+  if (gameOver) {
+    resetGame();
+    return;
+  }
+
   if (!started) {
     started = true;
-    spawnX = VIRTUAL_WIDTH + 200;
+    spawnX = VIRTUAL_WIDTH + OBSTACLE_WIDTH + 40;
   }
+
   player.vy = JUMP;
+  hopSteam.push({ x: player.x - 10, y: player.y + player.h / 2, life: 12 });
 }
 
 window.addEventListener("keydown", e => {
   if (e.code === "Space") jump();
 });
-
 canvas.addEventListener("touchstart", e => {
   e.preventDefault();
   jump();
@@ -159,10 +162,9 @@ canvas.addEventListener("touchstart", e => {
    HELPERS
 ================================ */
 function spawnObstacle() {
-  const minY = 80;
-  const maxY = VIRTUAL_HEIGHT - GAP - 120;
+  const minY = 100;
+  const maxY = VIRTUAL_HEIGHT - GAP - 200;
   const gapY = Math.random() * (maxY - minY) + minY;
-
   obstacles.push({ x: spawnX, gapY, passed: false });
   spawnX += SPAWN_DISTANCE;
 }
@@ -182,11 +184,55 @@ function resetGame() {
   obstacles = [];
   score = 0;
   started = false;
+  gameOver = false;
 }
 
 /* ===============================
-   DRAW
+   VISUALS
 ================================ */
+// stars
+const stars = Array.from({ length: 60 }, () => ({
+  x: Math.random() * VIRTUAL_WIDTH,
+  y: Math.random() * VIRTUAL_HEIGHT * 0.6,
+  r: Math.random() * 1.5 + 0.5,
+  c: Math.random() < 0.7 ? "#ffd966" : "#ffffff"
+}));
+
+// snow
+const snow = Array.from({ length: 40 }, () => ({
+  x: Math.random() * VIRTUAL_WIDTH,
+  y: Math.random() * VIRTUAL_HEIGHT,
+  s: Math.random() * 0.5 + 0.3
+}));
+
+// hop steam
+let hopSteam = [];
+
+// mountains scroll
+let mountainX = 0;
+
+// steam scroll
+let steamX = 0;
+
+/* ===============================
+   DRAW HELPERS
+================================ */
+function drawMoon() {
+  const x = 300, y = 120, r = 36;
+  const g = ctx.createRadialGradient(x, y, r * 0.3, x, y, r * 1.4);
+  g.addColorStop(0, "rgba(255,245,210,0.9)");
+  g.addColorStop(1, "rgba(255,245,210,0)");
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(x, y, r * 1.4, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "#f6e9b8";
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fill();
+}
+
 function drawObstacle(obs) {
   ctx.drawImage(woodImg, obs.x, 0, OBSTACLE_WIDTH, obs.gapY);
   ctx.drawImage(
@@ -202,6 +248,7 @@ function drawObstacle(obs) {
    MAIN LOOP
 ================================ */
 function loop() {
+  // background
   ctx.fillStyle = "#02040b";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -209,22 +256,51 @@ function loop() {
   ctx.translate(offsetX, offsetY);
   ctx.scale(scale, scale);
 
-  if (started) {
+  // stars
+  stars.forEach(s => {
+    ctx.fillStyle = s.c;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // moon
+  drawMoon();
+
+  // snow
+  snow.forEach(f => {
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(f.x, f.y, 1, 1);
+    if (!gameOver) {
+      f.y += f.s;
+      if (f.y > VIRTUAL_HEIGHT) f.y = 0;
+    }
+  });
+
+  // mountains
+  ctx.drawImage(mountainsImg, mountainX, 420);
+  ctx.drawImage(mountainsImg, mountainX + VIRTUAL_WIDTH, 420);
+  if (!gameOver) {
+    mountainX -= 0.3;
+    if (mountainX <= -VIRTUAL_WIDTH) mountainX = 0;
+  }
+
+  // physics
+  if (started && !gameOver) {
     player.vy += GRAVITY;
     player.y += player.vy;
   }
 
-  if (started) {
-    if (
-      obstacles.length === 0 ||
-      spawnX - obstacles[obstacles.length - 1].x >= SPAWN_DISTANCE
-    ) {
+  // obstacles
+  if (started && !gameOver) {
+    if (obstacles.length === 0 ||
+        spawnX - obstacles[obstacles.length - 1].x >= SPAWN_DISTANCE) {
       spawnObstacle();
     }
   }
 
-  for (let obs of obstacles) {
-    obs.x -= SPEED;
+  obstacles.forEach(obs => {
+    if (!gameOver) obs.x -= SPEED;
     drawObstacle(obs);
 
     if (!obs.passed && obs.x + OBSTACLE_WIDTH < player.x) {
@@ -251,17 +327,35 @@ function loop() {
       h: VIRTUAL_HEIGHT
     };
 
-    if (hit(hitBox, topBox) || hit(hitBox, botBox)) {
-      resetGame();
+    if (!gameOver && (hit(hitBox, topBox) || hit(hitBox, botBox))) {
+      gameOver = true;
     }
+  });
+
+  // hop steam
+  hopSteam.forEach(p => {
+    ctx.fillStyle = `rgba(255,255,255,${p.life / 12})`;
+    ctx.beginPath();
+    ctx.ellipse(p.x, p.y, 10, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    p.life--;
+  });
+  hopSteam = hopSteam.filter(p => p.life > 0);
+
+  // steam bottom
+  ctx.globalAlpha = 0.6;
+  ctx.drawImage(steamImg, steamX, VIRTUAL_HEIGHT - 120);
+  ctx.drawImage(steamImg, steamX + VIRTUAL_WIDTH, VIRTUAL_HEIGHT - 120);
+  ctx.globalAlpha = 1;
+  if (!gameOver) {
+    steamX -= 0.2;
+    if (steamX <= -VIRTUAL_WIDTH) steamX = 0;
   }
 
-  if (player.y < 0 || player.y + player.h > VIRTUAL_HEIGHT) {
-    resetGame();
-  }
-
+  // player
   ctx.drawImage(kokkyImg, player.x, player.y, player.w, player.h);
 
+  // UI
   ctx.fillStyle = "#fff";
   ctx.font = "20px Handjet";
   ctx.textAlign = "center";
