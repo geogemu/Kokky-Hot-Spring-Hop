@@ -24,6 +24,9 @@ function resizeCanvas() {
 function gameWidth()  { return canvas.width / DPR; }
 function gameHeight() { return canvas.height / DPR; }
 
+let stars = [];
+let snow = [];
+
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
@@ -156,8 +159,6 @@ let hopSteam = [];
 /* =====================================================
    BACKGROUND (stars + snow) init (size dependent)
 ===================================================== */
-let stars = [];
-let snow = [];
 
 function initBackground() {
   const W = gameWidth();
