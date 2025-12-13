@@ -4,6 +4,7 @@ const ctx = canvas.getContext("2d");
 const modal = document.getElementById("playerModal");
 const teamButtons = document.getElementById("teamButtons");
 const idSelect = document.getElementById("idSelect");
+const selectRow = document.getElementById("selectRow");
 const confirmBtn = document.getElementById("confirmPlayer");
 
 let selectedTeam = null;
@@ -31,7 +32,7 @@ teamButtons.addEventListener("click", e => {
   confirmBtn.disabled = true;
 
   idSelect.innerHTML = `<option value="">Select</option>`;
-  idSelect.disabled = false;
+  selectRow.classList.remove("hidden");
 
   if (selectedTeam === "Guest") {
     addOption("0", "0");
@@ -62,13 +63,10 @@ idSelect.addEventListener("change", () => {
 });
 
 confirmBtn.onclick = () => {
-  let playerId = "";
-
-  if (selectedTeam === "Guest") {
-    playerId = "Guest";
-  } else {
-    playerId = `${selectedTeam}-${selectedId}`;
-  }
+  let playerId =
+    selectedTeam === "Guest"
+      ? "Guest"
+      : `${selectedTeam}-${selectedId}`;
 
   localStorage.setItem("playerId", playerId);
   modal.style.display = "none";
