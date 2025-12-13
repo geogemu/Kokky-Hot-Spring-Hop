@@ -109,6 +109,19 @@ function setPlayer(playerId) {
 }
 
 /* =====================================================
+   RANKS (LOCKED)
+===================================================== */
+const RANKS = [
+  { score: 25,   name: "Steam Hopper" },
+  { score: 50,   name: "Onsen Ace" },
+  { score: 75,   name: "Steam Master" },
+  { score: 100,  name: "Onsen Overlord" },
+  { score: 250,  name: "King of the Onsen" },
+  { score: 500,  name: "Onsen Legend" },
+  { score: 1000, name: "Onsen God" }
+];
+
+/* =====================================================
    PLAYER SELECT OVERLAY CONTROL
 ===================================================== */
 function showOverlayOnLoad() {
