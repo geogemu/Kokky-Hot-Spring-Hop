@@ -515,12 +515,6 @@ function loop() {
   // player
   ctx.drawImage(kokkyImg, player.x, player.y, player.w, player.h);
 
-  // minimal UI text
-  ctx.fillStyle = "#fff";
-  ctx.font = "20px Handjet";
-  ctx.textAlign = "center";
-  ctx.fillText(`Score: ${score}  Best: ${bestScore}`, W / 2, 30);
-
    // TOP UI (HTML)
 scoreEl.textContent = "Score: " + score;
 bestEl.textContent = "Best: " + bestScore;
