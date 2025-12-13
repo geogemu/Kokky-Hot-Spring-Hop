@@ -20,6 +20,7 @@ body {
   max-width: 480px;     /* desktop cap */
   aspect-ratio: 2 / 3;  /* portrait game */
   touch-action: manipulation;
+  position: relative;
   z-index: 1; 
   flex-shrink: 0;
 }
@@ -194,4 +195,6 @@ body {
   text-align: center;
   font-size: 1.05rem;
   font-weight: 700;
+  position: relative;
+  z-index: 10;
 }
