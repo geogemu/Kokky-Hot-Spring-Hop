@@ -493,6 +493,18 @@ function checkRankUnlock() {
   }
 }
 
+/* =====================================================
+   BANNER SPARKLE HELPER
+===================================================== */
+function createBannerSparkles(count = 12) {
+  return Array.from({ length: count }, () => ({
+    x: Math.random(),          // 0–1 (relative position)
+    y: Math.random(),
+    r: Math.random() * 1.5 + 0.5,
+    alpha: Math.random() * 0.4 + 0.4,
+    pulse: Math.random() * Math.PI * 2
+  }));
+}
 
 /* =====================================================
    MAIN LOOP
