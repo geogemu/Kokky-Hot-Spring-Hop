@@ -121,6 +121,9 @@ const RANKS = [
   { score: 1000, name: "Onsen God" }
 ];
 
+// 🔧 TEST SWITCH
+const TEST_RANK_MODE = true;
+
 /* =====================================================
    PLAYER SELECT OVERLAY CONTROL
 ===================================================== */
