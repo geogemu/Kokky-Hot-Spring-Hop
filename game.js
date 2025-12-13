@@ -27,6 +27,14 @@ function gameHeight() { return canvas.height / DPR; }
 let stars = [];
 let snow = [];
 
+const player = {
+  x: 80,
+  y: 200,
+  w: 48,
+  h: 48,
+  vy: 0
+};
+
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
@@ -139,14 +147,6 @@ let gameOver = false;
 
 let score = 0;
 let bestScore = Number(localStorage.getItem("bestScore")) || 0;
-
-const player = {
-  x: 80,
-  y: 200,
-  w: 48,
-  h: 48,
-  vy: 0
-};
 
 let obstacles = [];
 let spawnX = 0;
