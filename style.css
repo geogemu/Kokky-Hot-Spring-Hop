@@ -188,6 +188,8 @@ body {
   font-size: 0.9rem;
   color: #ffffff;
   white-space: nowrap;
+  min-width: 90px;
+  text-align: right;
 }
 
 #scoreRow {
