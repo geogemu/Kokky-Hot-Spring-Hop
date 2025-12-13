@@ -3,7 +3,7 @@ const ctx = canvas.getContext("2d");
 
 const modal = document.getElementById("playerModal");
 const teamButtons = document.getElementById("teamButtons");
-const idButtons = document.getElementById("idButtons");
+const idSelect = document.getElementById("idSelect");
 const confirmBtn = document.getElementById("confirmPlayer");
 
 let selectedTeam = null;
@@ -29,27 +29,37 @@ teamButtons.addEventListener("click", e => {
   selectedTeam = e.target.dataset.team;
   selectedId = null;
   confirmBtn.disabled = true;
-  idButtons.innerHTML = "";
+
+  idSelect.innerHTML = `<option value="">Select</option>`;
+  idSelect.disabled = false;
 
   if (selectedTeam === "Guest") {
-    createIdButton("0");
+    addOption("0", "0");
   } else if (selectedTeam === "Admin") {
-    createIdButton("G");
-    createIdButton("S");
+    addOption("G", "G");
+    addOption("S", "S");
   } else {
-    teamData[selectedTeam].forEach(id => createIdButton(id));
+    teamData[selectedTeam].forEach(id => {
+      if (id === "A" || id === "B") {
+        addOption(id, `${id} (ALT)`);
+      } else {
+        addOption(id, id);
+      }
+    });
   }
 });
 
-function createIdButton(id) {
-  const btn = document.createElement("button");
-  btn.textContent = id;
-  btn.onclick = () => {
-    selectedId = id;
-    confirmBtn.disabled = false;
-  };
-  idButtons.appendChild(btn);
+function addOption(value, label) {
+  const opt = document.createElement("option");
+  opt.value = value;
+  opt.textContent = label;
+  idSelect.appendChild(opt);
 }
+
+idSelect.addEventListener("change", () => {
+  selectedId = idSelect.value;
+  confirmBtn.disabled = !selectedId;
+});
 
 confirmBtn.onclick = () => {
   let playerId = "";
@@ -64,7 +74,7 @@ confirmBtn.onclick = () => {
   modal.style.display = "none";
 };
 
-// TEMP draw loop
+// TEMP draw
 function draw() {
   ctx.fillStyle = "#02040b";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -74,7 +84,7 @@ function draw() {
     ctx.fillStyle = "#fff";
     ctx.font = "20px Handjet";
     ctx.textAlign = "center";
-    ctx.fillText(`Player: ${pid}`, canvas.width/2, canvas.height/2);
+    ctx.fillText(`Player: ${pid}`, canvas.width / 2, canvas.height / 2);
   }
 
   requestAnimationFrame(draw);
