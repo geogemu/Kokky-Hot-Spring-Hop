@@ -47,6 +47,11 @@ const idSection = document.getElementById("idSection");
 const idList = document.getElementById("idList");
 const preview = document.getElementById("playerPreview");
 const playBtn = document.getElementById("playBtn");
+const scoreEl = document.getElementById("score");
+const bestEl = document.getElementById("best");
+const playerIdLabel = document.getElementById("playerIdLabel");
+const changePlayerBtn = document.getElementById("changePlayerBtn");
+
 
 let selectedTeam = null;
 let selectedId = null;
