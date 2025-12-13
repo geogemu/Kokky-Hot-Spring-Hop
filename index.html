@@ -5,36 +5,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Kokky’s Hot Spring Hop</title>
 
+  <!-- Handjet font -->
   <link href="https://fonts.googleapis.com/css2?family=Handjet:wght@400&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div id="playerModal" class="modal">
-    <div class="modal-box">
-      <h2>Choose Player</h2>
+  <!-- CANVAS -->
+  <canvas id="game"></canvas>
 
-      <div id="teamButtons" class="button-row">
-        <button data-team="W">White</button>
-        <button data-team="R">Red</button>
-        <button data-team="G">Green</button>
-        <button data-team="B">Blue</button>
-        <button data-team="Guest">Guest</button>
-        <button data-team="Admin">Admin</button>
+  <!-- PLAYER SELECT OVERLAY -->
+  <div id="playerOverlay" class="overlay">
+    <div class="playerBox">
+      <h2>Select Player</h2>
+
+      <!-- TEAM BUTTONS -->
+      <div class="teamGrid">
+        <button class="teamBtn white" data-team="W">White</button>
+        <button class="teamBtn red" data-team="R">Red</button>
+        <button class="teamBtn green" data-team="G">Green</button>
+        <button class="teamBtn blue" data-team="B">Blue</button>
+
+        <button class="teamBtn guest" data-team="Guest">Guest</button>
+        <button class="teamBtn admin" data-team="Admin">Admin</button>
       </div>
 
-      <!-- Hidden until team selected -->
-      <div id="selectRow" class="button-row hidden">
-        <select id="idSelect">
-          <option value="">Select</option>
-        </select>
+      <!-- ID SECTION -->
+      <div id="idSection" class="hidden">
+        <div class="sectionTitle">Choose ID</div>
+        <div id="idList"></div>
       </div>
 
-      <button id="confirmPlayer" class="confirm" disabled>Confirm</button>
+      <!-- PREVIEW -->
+      <div id="playerPreview"></div>
+
+      <!-- PLAY BUTTON -->
+      <button id="playBtn" class="playBtn hidden">Play!</button>
     </div>
   </div>
 
-  <canvas id="gameCanvas"></canvas>
   <script src="game.js"></script>
 </body>
 </html>
