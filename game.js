@@ -73,6 +73,23 @@ function setPlayer(playerId) {
 }
 
 /* =====================================================
+   GAME STATE
+===================================================== */
+let started = false;
+let gameOver = false;
+
+let score = 0;
+let bestScore = Number(localStorage.getItem("bestScore")) || 0;
+
+let obstacles = [];
+let spawnX = 0;
+
+let mountainX = 0;
+let steamX = 0;
+
+let hopSteam = [];
+
+/* =====================================================
    PLAYER SELECT OVERLAY CONTROL
 ===================================================== */
 function showOverlayOnLoad() {
@@ -80,6 +97,14 @@ function showOverlayOnLoad() {
   hasPlayer = false;
   started = false;
   gameOver = false;
+
+  // HARD RESET GAME STATE
+  score = 0;
+  obstacles = [];
+  spawnX = 0;
+
+  player.vy = 0;
+  player.y = 200;
 
   overlay.classList.remove("hidden");
 
@@ -203,23 +228,6 @@ let woodPattern = null;
 woodImg.onload = () => {
   woodPattern = ctx.createPattern(woodImg, "repeat");
 };
-
-/* =====================================================
-   GAME STATE
-===================================================== */
-let started = false;
-let gameOver = false;
-
-let score = 0;
-let bestScore = Number(localStorage.getItem("bestScore")) || 0;
-
-let obstacles = [];
-let spawnX = 0;
-
-let mountainX = 0;
-let steamX = 0;
-
-let hopSteam = [];
 
 /* =====================================================
    BACKGROUND (stars + snow) init (size dependent)
