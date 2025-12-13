@@ -15,6 +15,7 @@ html, body {
 }
 
 body {
+  background: #000814;
   font-family: "Handjet", sans-serif;
   color: #ffffff;
   display: flex;
@@ -171,6 +172,7 @@ for (let i = 0; i < 35; i++) {
   f.style.width = size + "px";
   f.style.height = size + "px";
   f.style.left = Math.random() * 100 + "vw";
+  f.style.top = -(Math.random() * 100) + "px";
   f.style.animationDuration = (Math.random() * 5 + 6) + "s";
   f.style.animationDelay = Math.random() * 5 + "s";
   document.body.appendChild(f);
