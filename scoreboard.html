@@ -172,6 +172,25 @@ td {
 /* ===== REFERENCE PAGE ===== */
 const page = document.querySelector(".page");
 
+/* ===== RANKS ===== */
+    const RANKS = [
+  { score: 25,   name: "Steam Hopper" },
+  { score: 50,   name: "Onsen Ace" },
+  { score: 75,   name: "Steam Master" },
+  { score: 100,  name: "Onsen Overlord" },
+  { score: 250,  name: "King of the Onsen" },
+  { score: 500,  name: "Onsen Legend" },
+  { score: 1000, name: "Onsen God" }
+];
+
+function getRankForScore(score) {
+  let best = "—";
+  for (const r of RANKS) {
+    if (score >= r.score) best = r.name;
+  }
+  return best;
+}
+
 /* ===== CREATE STARS ===== */
 for (let i = 0; i < 50; i++) {
   const s = document.createElement("div");
@@ -215,13 +234,14 @@ function loadScores() {
       <td>${i + 1}</td>
       <td>${entry.id}</td>
       <td>${entry.score}</td>
-      <td>${entry.rank}</td>
+      <td>${getRankForScore(entry.score)}</td>
     `;
     tbody.appendChild(tr);
   });
 }
 
 loadScores();
+
 </script>
 
 </body>
