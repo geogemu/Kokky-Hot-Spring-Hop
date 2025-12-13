@@ -14,6 +14,7 @@ function resizeCanvas() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 resizeCanvas();
+console.log("Canvas size:", canvas.width, canvas.height);
 window.addEventListener("resize", resizeCanvas);
 
 /* =====================================================
