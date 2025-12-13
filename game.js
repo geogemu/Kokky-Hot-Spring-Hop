@@ -71,12 +71,6 @@ const TEAM_IDS = {
   Admin: ["G","S"]
 };
 
-/* ===== ADD THIS RIGHT HERE ===== */
-function setPlayer(playerId) {
-  localStorage.setItem("playerId", playerId);
-  playerIdLabel.textContent = "Player: " + playerId;
-}
-
 /* =====================================================
    GAME STATE
 ===================================================== */
@@ -84,7 +78,7 @@ let started = false;
 let gameOver = false;
 
 let score = 0;
-let bestScore = Number(localStorage.getItem("bestScore")) || 0;
+let bestScore = 0;
 
 let obstacles = [];
 let spawnX = 0;
@@ -93,6 +87,23 @@ let mountainX = 0;
 let steamX = 0;
 
 let hopSteam = [];
+
+/* ===== PLAYER SETTER ===== */
+function setPlayer(playerId) {
+  localStorage.setItem("playerId", playerId);
+  playerIdLabel.textContent = "Player: " + playerId;
+
+  const savedBoard = JSON.parse(localStorage.getItem("scoreboard") || "[]");
+  const entry = savedBoard.find(e => e.id === playerId);
+  bestScore = entry ? entry.score : 0;
+   
+}
+
+// restore player on reload (label + best score)
+const savedPlayer = localStorage.getItem("playerId");
+if (savedPlayer) {
+  setPlayer(savedPlayer);
+}
 
 /* =====================================================
    PLAYER SELECT OVERLAY CONTROL
