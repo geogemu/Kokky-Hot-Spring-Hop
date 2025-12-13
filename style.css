@@ -13,3 +13,48 @@ canvas {
   width: 100vw;
   height: 100vh;
 }
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.modal-box {
+  background: #02040b;
+  border-radius: 16px;
+  padding: 20px;
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+  color: white;
+}
+
+.modal h2 {
+  font-weight: normal;
+  margin-bottom: 12px;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+button {
+  font-family: 'Handjet', sans-serif;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+}
+
+.confirm {
+  background: #ff7aa2;
+  color: black;
+}
