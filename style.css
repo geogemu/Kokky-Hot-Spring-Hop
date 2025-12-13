@@ -21,6 +21,7 @@ body {
   aspect-ratio: 2 / 3;  /* portrait game */
   touch-action: manipulation;
   z-index: 1; 
+  flex-shrink: 0;
 }
 
 /* =====================
