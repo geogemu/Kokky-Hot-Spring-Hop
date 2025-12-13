@@ -66,23 +66,34 @@ const TEAM_IDS = {
   Admin: ["G","S"]
 };
 
+/* ===== ADD THIS RIGHT HERE ===== */
+function setPlayer(playerId) {
+  localStorage.setItem("playerId", playerId);
+  playerIdLabel.textContent = "Player: " + playerId;
+}
+
 /* =====================================================
    PLAYER SELECT OVERLAY CONTROL
 ===================================================== */
-
 function showOverlayIfNeeded() {
-  // Always require player selection on page load
-  hasPlayer = false;
-  overlay.classList.remove("hidden");
+  const savedPlayer = localStorage.getItem("playerId");
 
-  // Clear any old preview text
-  preview.textContent = "";
-  playBtn.classList.add("hidden");
+  if (savedPlayer) {
+    hasPlayer = true;
+    overlay.classList.add("hidden");
+    setPlayer(savedPlayer);   // restore label on reload
+  } else {
+    hasPlayer = false;
+    overlay.classList.remove("hidden");
+
+    // reset overlay UI
+    preview.textContent = "";
+    playBtn.classList.add("hidden");
+  }
 }
 
 // Run once on load
 showOverlayIfNeeded();
-
 
 
 teamButtons.forEach(btn => {
@@ -138,17 +149,13 @@ playBtn.addEventListener("click", () => {
     pid = `${selectedTeam}-${selectedId}`;
   }
 
-  localStorage.setItem("playerId", pid);
+  setPlayer(pid);      // ✅ ONLY place that saves + updates label
   hasPlayer = true;
-  started = false;
-  gameOver = false;
 
   player.vy = 0;
   player.y = 200;
-   
-  overlay.classList.add("hidden");
 
-  playerIdLabel.textContent = "Player: " + pid;
+  overlay.classList.add("hidden");
 });
 
 
@@ -238,20 +245,21 @@ function doJump() {
   // must pick player first
   if (!hasPlayer) return;
 
-  // restart behavior: on game over, next tap resets and starts
+  // first jump starts the game
+  if (!started) {
+    started = true;
+    spawnX = gameWidth() + OB_W + 40;
+  }
+
+  // restart after game over
   if (gameOver) {
     resetGame();
     started = true;
     spawnX = gameWidth() + OB_W + 40;
   }
 
-  // first start
-  if (!started) {
-    started = true;
-    spawnX = gameWidth() + OB_W + 40;
-  }
-
   player.vy = JUMP;
+}
 
   // hop steam near foot, more transparent
   hopSteam.push({
