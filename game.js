@@ -297,6 +297,12 @@ window.addEventListener("keydown", e => {
   if (e.code === "Space") doJump();
 });
 
+// Mouse click (desktop)
+canvas.addEventListener("mousedown", e => {
+  e.preventDefault();
+  doJump();
+});
+
 canvas.addEventListener("touchstart", e => {
   e.preventDefault();
   doJump();
