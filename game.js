@@ -378,9 +378,16 @@ function spawnObstacle() {
   const W = gameWidth();
   const H = gameHeight();
 
-  const minY = 120;
-  const maxY = H - GAP - 220;
-  const gapY = Math.random() * (maxY - minY) + minY;
+const minY = 80;                 // allow higher gaps
+const maxY = H - GAP - 180;      // allow lower gaps
+
+let gapY = Math.random() * (maxY - minY) + minY;
+
+// small bias so it doesn't stay centered
+if (Math.random() < 0.5) {
+  gapY += Math.random() * 60 - 30;
+}
+
 
   obstacles.push({
     x: spawnX,
