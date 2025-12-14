@@ -81,6 +81,8 @@ let gameOver = false;
 let score = 0;
 let bestScore = 0;
 
+let lastSpeedLevel = 0;
+
 let obstacles = [];
 let spawnX = 0;
 
@@ -250,7 +252,7 @@ changePlayerBtn.addEventListener("click", () => {
 const GRAVITY = 0.55;
 const JUMP = -8;
 const GAP = 150;
-const SPEED = 3.5;
+let SPEED = 2.5;
 const SPAWN_DISTANCE = 270;
 
 const OB_W = 70;
@@ -367,6 +369,8 @@ function resetGame() {
   score = 0;
   started = false;
   gameOver = false;
+SPEED = 2.5;
+lastSpeedLevel = 0;
 
    lastRankShown = null;
 
@@ -681,14 +685,23 @@ shootingStars = shootingStars.filter(s => s.life > 0);
     drawObstacle(obs);
 
     // scoring
-    if (!obs.passed && obs.x + OB_W < player.x) {
-      obs.passed = true;
-      score++;
-      checkRankUnlock();
-      if (score > bestScore) {
-        bestScore = score;
-      }
-    }
+if (!obs.passed && obs.x + OB_W < player.x) {
+  obs.passed = true;
+  score++;
+  checkRankUnlock();
+
+  // speed increase every 50 points, cap at 3.5
+  const speedLevel = Math.floor(score / 50);
+
+  if (speedLevel > lastSpeedLevel && SPEED < 3.5) {
+    SPEED = Math.min(2.5 + speedLevel * 0.1, 3.5);
+    lastSpeedLevel = speedLevel;
+  }
+
+  if (score > bestScore) {
+    bestScore = score;
+  }
+}
 
     // collision
     const hitBox = {
