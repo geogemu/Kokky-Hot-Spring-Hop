@@ -286,13 +286,20 @@ stars = Array.from({ length: 70 }, () => ({
   twinkleSpeed: Math.random() * 0.02 + 0.006
 }));
 
-  // bigger snow (recreated on resize only)
-  snow = Array.from({ length: 35 }, () => ({
-    x: Math.random() * W,
-    y: Math.random() * H,
-    s: Math.random() * 0.4 + 0.3,
-    r: Math.random() * 1.5 + 1
-  }));
+  // layered snow
+snow = Array.from({ length: 45 }, () => ({
+  x: Math.random() * W,
+  y: Math.random() * H,
+
+  r: Math.random() * 2.5 + 0.8,      // size variation
+  vy: Math.random() * 0.4 + 0.3,     // fall speed
+  vx: Math.random() * 0.3 - 0.15,    // wind drift
+
+  alpha: Math.random() * 0.5 + 0.4,  // softness
+  sway: Math.random() * Math.PI * 2, // side-to-side motion
+  swaySpeed: Math.random() * 0.01 + 0.005
+}));
+
 
   // keep player in bounds after resize
   player.y = Math.min(Math.max(player.y, 0), H - player.h);
@@ -443,13 +450,29 @@ for (const s of stars) {
   ctx.fill();
   ctx.restore();
 
-  // snow (bigger, slow)
-  for (const f of snow) {
-    ctx.fillStyle = "#fff";
-    ctx.beginPath();
-    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-    ctx.fill();
-  }
+  // soft snow
+for (const f of snow) {
+  ctx.save();
+
+  ctx.globalAlpha = f.alpha;
+  ctx.fillStyle = "#ffffff";
+  ctx.shadowColor = "rgba(255,255,255,0.6)";
+  ctx.shadowBlur = f.r * 2;
+
+  ctx.beginPath();
+  ctx.ellipse(
+    f.x,
+    f.y,
+    f.r,
+    f.r * 0.7,   // slightly oval = snowflake feel
+    0,
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
+
+  ctx.restore();
+}
 }
 
 /* =====================================================
@@ -565,13 +588,18 @@ document.getElementById("bestValue").textContent = bestScore;
   // ================= BACKGROUND =================
   drawSkyAndMoon();
 
-  // update snow
-  if (!gameOver) {
-    for (const f of snow) {
-      f.y += f.s;
-      if (f.y > H) f.y = 0;
-    }
+ // update snow (always active)
+for (const f of snow) {
+  f.sway += f.swaySpeed;
+
+  f.x += f.vx + Math.sin(f.sway) * 0.2;
+  f.y += f.vy;
+
+  if (f.y > H + 10) {
+    f.y = -10;
+    f.x = Math.random() * W;
   }
+}
 
    // ================= SHOOTING STARS =================
 if (Math.random() < 0.003) { // rarity control
