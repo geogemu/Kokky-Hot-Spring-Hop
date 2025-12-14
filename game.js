@@ -90,8 +90,6 @@ let hopSteam = [];
 
 let banner = null;
 let lastRankShown = null;
-let unlockedRanks = [];
-
 
 /* ===== PLAYER SETTER ===== */
 function setPlayer(playerId) {
@@ -103,10 +101,6 @@ function setPlayer(playerId) {
   const entry = savedBoard.find(e => e.id === playerId);
   bestScore = entry ? entry.score : 0;
 
-// load unlocked ranks
-  unlockedRanks = JSON.parse(
-    localStorage.getItem(`ranks_${playerId}`) || "[]"
-  );
 }
 
 /* =====================================================
