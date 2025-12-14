@@ -487,21 +487,31 @@ function drawObstacle(obs) {
 
 
 function checkRankUnlock() {
+  let currentRank = null;
+
+  // find the highest rank the score qualifies for
   for (const r of RANKS) {
-    if (score >= r.score && lastRankShown !== r.score) {
-      lastRankShown = r.score;
-
-      banner = {
-        text: r.name,
-        y: -60,
-        life: 180,
-        alpha: 1,
-        sparkles: createBannerSparkles()
-      };
-
-      return;
+    if (score >= r.score) {
+      currentRank = r;
     }
   }
+
+  // no rank unlocked yet
+  if (!currentRank) return;
+
+  // already shown this rank during this run
+  if (lastRankShown === currentRank.score) return;
+
+  // trigger banner ONCE
+  lastRankShown = currentRank.score;
+
+  banner = {
+    text: currentRank.name,
+    y: -60,
+    life: 180,   // ~3 seconds
+    alpha: 1,
+    sparkles: createBannerSparkles()
+  };
 }
 
 /* =====================================================
