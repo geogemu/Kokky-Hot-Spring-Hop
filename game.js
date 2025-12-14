@@ -273,15 +273,16 @@ function initBackground() {
   const W = gameWidth();
   const H = gameHeight();
 
-// fixed stars with subtle twinkle (recreated on resize only)
+// twinkling stars (subtle, elegant)
 stars = Array.from({ length: 60 }, () => ({
   x: Math.random() * W,
   y: Math.random() * H * 0.6,
   r: Math.random() * 1.2 + 0.6,
-  baseAlpha: Math.random() * 0.4 + 0.4,
-  twinkleSpeed: Math.random() * 0.01 + 0.002,
-  phase: Math.random() * Math.PI * 2,
-  c: Math.random() < 0.7 ? "#ffd966" : "#ffffff"
+  c: Math.random() < 0.7 ? "#ffd966" : "#ffffff",
+
+  baseAlpha: Math.random() * 0.4 + 0.5,   // natural brightness
+  phase: Math.random() * Math.PI * 2,     // start offset
+  twinkleSpeed: Math.random() * 0.015 + 0.005
 }));
 
   // bigger snow (recreated on resize only)
