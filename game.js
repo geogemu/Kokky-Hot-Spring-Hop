@@ -96,6 +96,8 @@ let squashSpeed = 0;
 let banner = null;
 let lastRankShown = null;
 
+let deathFade = 0;
+
 /* ===== PLAYER SETTER ===== */
 function setPlayer(playerId) {
   localStorage.setItem("playerId", playerId);
@@ -371,6 +373,7 @@ function resetGame() {
   gameOver = false;
 SPEED = 2.5;
 lastSpeedLevel = 0;
+deathFade = 0;
 
    lastRankShown = null;
 
@@ -735,6 +738,11 @@ if (!obs.passed && obs.x + OB_W < player.x) {
     }
   }
 
+   // death fade
+if (gameOver && deathFade < 0.5) {
+  deathFade += 0.01;
+}
+
   // ================= HOP STEAM =================
   hopSteam.forEach(p => {
     ctx.fillStyle = `rgba(255,255,255,${p.life / 24})`;
@@ -781,7 +789,15 @@ drawBanner();
   ctx.drawImage(steamImg, steamX, steamY);
   ctx.drawImage(steamImg, steamX + W, steamY);
   ctx.globalAlpha = 1;
-   
+
+  // ================= DEATH FADE =================
+  if (deathFade > 0) {
+    ctx.save();
+    ctx.fillStyle = `rgba(0, 0, 0, ${deathFade})`;
+    ctx.fillRect(0, 0, gameWidth(), gameHeight());
+    ctx.restore();
+  }
+
   requestAnimationFrame(loop);
 }
 
