@@ -274,17 +274,25 @@ function initBackground() {
   const W = gameWidth();
   const H = gameHeight();
 
-// twinkling stars (visible but calm)
-stars = Array.from({ length: 70 }, () => ({
-  x: Math.random() * W,
-  y: Math.random() * H * 0.6,
-  r: Math.random() * 1.6 + 0.8,
-  c: Math.random() < 0.65 ? "#ffd966" : "#ffffff",
+// stars with depth (far + near)
+stars = Array.from({ length: 70 }, () => {
+  const isNear = Math.random() < 0.3;
 
-  baseAlpha: Math.random() * 0.45 + 0.35,
-  phase: Math.random() * Math.PI * 2,
-  twinkleSpeed: Math.random() * 0.02 + 0.006
-}));
+  return {
+    x: Math.random() * W,
+    y: Math.random() * H * 0.6,
+
+    r: isNear
+      ? Math.random() * 1.8 + 1.6
+      : Math.random() * 1.2 + 0.6,
+
+    c: Math.random() < 0.65 ? "#ffd966" : "#ffffff",
+
+    baseAlpha: isNear ? 0.6 : 0.35,
+    phase: Math.random() * Math.PI * 2,
+    twinkleSpeed: isNear ? 0.025 : 0.01
+  };
+});
 
   // layered snow
 snow = Array.from({ length: 45 }, () => ({
@@ -429,6 +437,11 @@ for (const s of stars) {
   const moonX = W - 80;
   const moonY = 80;
   const moonR = 26;
+
+   // soft moon glow (halo)
+ctx.shadowColor = "rgba(255, 245, 200, 0.4)";
+ctx.shadowBlur = 25;
+
   const moonGrad = ctx.createRadialGradient(
     moonX-8, moonY-8, 4,
     moonX, moonY, moonR+6
@@ -506,23 +519,32 @@ function drawObstacle(obs) {
     ctx.save();
     ctx.fillStyle = woodPattern;
 
-    // top
+    // TOP obstacle
     ctx.translate(obs.x, 0);
     ctx.fillRect(0, 0, OB_W, obs.gapY);
 
-    // bottom
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0); // restore DPR transform
+    // top obstacle edge (RIGHT SIDE)
+    ctx.fillStyle = "rgba(0,0,0,0.15)";
+    ctx.fillRect(OB_W - 4, 0, 4, obs.gapY);
+
+    // reset transform
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    // BOTTOM obstacle
     ctx.translate(obs.x, obs.gapY + GAP);
     ctx.fillRect(0, 0, OB_W, H - (obs.gapY + GAP));
 
+    // bottom obstacle edge (RIGHT SIDE)
+    ctx.fillStyle = "rgba(0,0,0,0.15)";
+    ctx.fillRect(OB_W - 4, 0, 4, H - (obs.gapY + GAP));
+
     ctx.restore();
   } else {
-    // fallback until wood loads
+    // fallback
     ctx.drawImage(woodImg, obs.x, 0, OB_W, obs.gapY);
     ctx.drawImage(woodImg, obs.x, obs.gapY + GAP, OB_W, H - (obs.gapY + GAP));
   }
 }
-
 
 function checkRankUnlock() {
   let currentRank = null;
