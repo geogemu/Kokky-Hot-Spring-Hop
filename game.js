@@ -88,6 +88,8 @@ let mountainX = 0;
 let steamX = 0;
 
 let hopSteam = [];
+let squash = 1;
+let squashSpeed = 0;
 
 let banner = null;
 let lastRankShown = null;
@@ -349,6 +351,10 @@ canvas.addEventListener("touchstart", e => {
   e.preventDefault();
   doJump();
 }, { passive: false });
+
+// trigger hop squash
+squash = 0.85;
+squashSpeed = 0.08;
 
 /* =====================================================
    HELPERS
@@ -718,8 +724,31 @@ shootingStars = shootingStars.filter(s => s.life > 0);
   });
   hopSteam = hopSteam.filter(p => p.life > 0);
 
+   // recover squash back to normal
+if (squash < 1) {
+  squash += squashSpeed;
+  if (squash > 1) squash = 1;
+}
+
   // ================= PLAYER =================
-  ctx.drawImage(kokkyImg, player.x, player.y, player.w, player.h);
+ctx.save();
+
+const drawW = player.w;
+const drawH = player.h * squash;
+
+// keep feet in same place
+const offsetY = player.h - drawH;
+
+ctx.drawImage(
+  kokkyImg,
+  player.x,
+  player.y + offsetY,
+  drawW,
+  drawH
+);
+
+ctx.restore();
+
 
   // ================= BANNER =================
    
