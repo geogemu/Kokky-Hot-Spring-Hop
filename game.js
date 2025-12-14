@@ -355,6 +355,9 @@ function resetGame() {
   gameOver = false;
 
    lastRankShown = null;
+
+     // ✨ NEW SKY EVERY GAME
+  initBackground();
 }
 
 function spawnObstacle() {
@@ -392,19 +395,19 @@ function drawSkyAndMoon() {
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
 
-// stars (twinkling with glow)
+// stars (twinkling with glow – magical)
 for (const s of stars) {
   s.phase += s.twinkleSpeed;
 
   const alpha =
-    s.baseAlpha + Math.sin(s.phase) * 0.35;
+    s.baseAlpha + Math.sin(s.phase) * 0.4; // stronger shimmer
 
   ctx.save();
   ctx.globalAlpha = alpha;
 
-  // subtle glow
+  // stronger, softer glow
   ctx.shadowColor = s.c;
-  ctx.shadowBlur = 6;
+  ctx.shadowBlur = 10;
 
   ctx.fillStyle = s.c;
   ctx.beginPath();
