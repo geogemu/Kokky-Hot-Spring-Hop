@@ -19,4 +19,4 @@ export const db = getFirestore(app);
 export const auth = getAuth(app);
 
 // sign in anonymously (auto, no popup)
-signInAnonymously(auth).catch(console.error);
+export const authReady = signInAnonymously(auth).catch(console.error);
