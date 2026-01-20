@@ -736,8 +736,12 @@ if (!obs.passed && obs.x + OB_W < player.x) {
         hitBox.y + hitBox.h > obs.gapY + GAP;
 
       if (hitsTop || hitsBottom) {
-        gameOver = true;
-        saveScore();
+if (!gameOver) {
+  gameOver = true;
+  const bestEver = saveScore();
+  saveBestOnline(bestEver);
+}
+
       }
     }
   }
@@ -745,9 +749,12 @@ if (!obs.passed && obs.x + OB_W < player.x) {
   // ================= FLOOR / CEILING =================
   if (!gameOver && hasPlayer) {
     if (player.y < 0 || player.y + player.h > H) {
-      gameOver = true;
-saveScore();
-saveBestOnline(score);
+if (!gameOver) {
+  gameOver = true;
+  const bestEver = saveScore();
+  saveBestOnline(bestEver);
+}
+
 
     }
   }
@@ -941,17 +948,21 @@ function spawnShootingStar() {
 
 function saveScore() {
   const playerId = localStorage.getItem("playerId");
-  if (!playerId) return;
+  if (!playerId) return 0;
 
   let board = JSON.parse(localStorage.getItem("scoreboard") || "[]");
 
   const existing = board.find(e => e.id === playerId);
+
+  let bestEver = score;
 
   if (existing) {
     // update high score if beaten
     if (score > existing.score) {
       existing.score = score;
     }
+
+    bestEver = existing.score;
 
     // rank NEVER downgrades
     existing.rank = getRankForScore(existing.score) || "—";
@@ -962,42 +973,34 @@ function saveScore() {
       score: score,
       rank: getRankForScore(score) || "—"
     });
+
+    bestEver = score;
   }
 
   localStorage.setItem("scoreboard", JSON.stringify(board));
+  return bestEver;
 }
+
 
 
 // ================= ONLINE SAVE =================
 
 async function saveBestOnline(bestScore) {
-  console.log("saveBestOnline called", bestScore);
-
   const playerId = localStorage.getItem("playerId");
-  if (!playerId) {
-    console.log("no playerId, abort");
-    return;
-  }
+  if (!playerId) return;
 
   try {
     // wait for anonymous auth
     if (!auth.currentUser) {
-      console.log("waiting for auth...");
       await authReady;
     }
-
-    console.log("auth ok, writing to firestore", playerId, bestScore);
 
     const ref = doc(db, "scores", playerId);
     const snap = await getDoc(ref);
     const prev = snap.exists() ? (snap.data().score || 0) : 0;
 
-    console.log("previous score:", prev);
-
-    if (bestScore <= prev) {
-      console.log("score not higher, skip write");
-      return;
-    }
+    // only update if improved
+    if (bestScore <= prev) return;
 
     await setDoc(
       ref,
@@ -1009,12 +1012,8 @@ async function saveBestOnline(bestScore) {
       { merge: true }
     );
 
-    console.log("Firestore write SUCCESS");
-
   } catch (err) {
     console.error("saveBestOnline error:", err);
   }
 }
-
-
 
