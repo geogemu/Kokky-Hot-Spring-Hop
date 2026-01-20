@@ -741,7 +741,9 @@ if (!obs.passed && obs.x + OB_W < player.x) {
   if (!gameOver && hasPlayer) {
     if (player.y < 0 || player.y + player.h > H) {
       gameOver = true;
-      saveScore();
+saveScore();
+saveBestOnline(score);
+
     }
   }
 
@@ -938,26 +940,51 @@ function saveScore() {
 
   let board = JSON.parse(localStorage.getItem("scoreboard") || "[]");
 
-  const rank = getRankForScore(score) || "—";
-
   const existing = board.find(e => e.id === playerId);
 
-if (existing) {
-  // update high score if beaten
-  if (score > existing.score) {
-    existing.score = score;
+  if (existing) {
+    // update high score if beaten
+    if (score > existing.score) {
+      existing.score = score;
+    }
+
+    // rank NEVER downgrades
+    existing.rank = getRankForScore(existing.score) || "—";
+
+  } else {
+    board.push({
+      id: playerId,
+      score: score,
+      rank: getRankForScore(score) || "—"
+    });
   }
-
-  // ALWAYS update best rank (rank never downgrades)
-  existing.rank = getRankForScore(existing.score) || "—";
-
-} else {
-  board.push({
-    id: playerId,
-    score: score,
-    rank: getRankForScore(score) || "—"
-  });
-}
 
   localStorage.setItem("scoreboard", JSON.stringify(board));
 }
+
+
+// ================= ONLINE SAVE =================
+
+async function saveBestOnline(bestScore) {
+  const playerId = localStorage.getItem("playerId");
+  if (!playerId) return;
+
+  try {
+    const ref = doc(db, "scores", playerId);
+    const snap = await getDoc(ref);
+    const prev = snap.exists() ? (snap.data().score || 0) : 0;
+
+    // only update if improved
+    if (bestScore <= prev) return;
+
+    await setDoc(ref, {
+      id: playerId,
+      score: bestScore,
+      updatedAt: Date.now()
+    }, { merge: true });
+
+  } catch (err) {
+    console.error("saveBestOnline error:", err);
+  }
+}
+
