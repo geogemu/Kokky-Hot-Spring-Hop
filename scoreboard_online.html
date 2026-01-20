@@ -1,146 +1,394 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kokky Online Scoreboard</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    /* simple fallback styling if style.css doesn't cover table */
-    .onlineWrap{max-width:720px;margin:0 auto;padding:18px}
-    .onlineCard{background:#0b0b12;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px}
-    .onlineHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
-    .onlineHeader h1{font-size:18px;margin:0}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
-    th{opacity:.8;font-weight:700}
-    .btn{background:#ffd966;color:#150818;border:none;border-radius:10px;padding:8px 12px;font-weight:800;cursor:pointer}
-    .muted{opacity:.7;font-size:12px}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kokky's Hot Spring Hop – Online Scoreboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Handjet:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: #000814;            /* BLACK SIDES */
+  font-family: "Handjet", sans-serif;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+}
+
+/* ===== PAGE (MATCH GAME WIDTH) ===== */
+.page {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  position: relative;
+  background: linear-gradient(#0A1633, #000814);
+  overflow: hidden;
+}
+
+/* ===== STARS & SNOW (SCOPED TO PAGE) ===== */
+.star,
+.snow {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Stars */
+.star {
+  background: #ffd966;
+  border-radius: 50%;
+  opacity: 0.9;
+}
+
+/* Snow */
+.snow {
+  background: #ffffff;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  from { transform: translateY(-120px); }
+  to   { transform: translateY(110vh); }
+}
+
+/* ===== SCOREBOARD CONTAINER ===== */
+.container {
+  max-width: 440px;
+  margin: 30px auto;
+  padding: 20px;
+  background: rgba(10, 12, 28, 0.85);
+  border-radius: 20px;
+  border: 2px solid rgba(255,255,255,0.2);
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.tableWrap {
+  max-height: 55vh;          /* controls how tall the table can be */
+  overflow-y: auto;          /* ENABLE SCROLL */
+  margin-top: 20px;
+}
+
+/* nicer scrolling on iOS */
+.tableWrap {
+  -webkit-overflow-scrolling: touch;
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.5rem;   /* smaller, 1-line */
+  font-weight: 400;
+  margin-bottom: 6px;
+  white-space: nowrap; /* force single line */
+}
+
+.sub {
+  text-align: center;
+  font-size: 1.1rem;
+  opacity: 0.85;
+}
+
+table {
+  width: 100%;
+  margin-top: 0;   /* IMPORTANT */
+  border-collapse: collapse;
+  font-size: 1.3rem;
+}
+
+th {
+  padding: 12px;
+  background: rgba(40, 50, 90, 0.9);
+  border-bottom: 2px solid #ffffff33;
+}
+
+td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ffffff22;
+}
+
+.backBtn {
+  margin: 20px auto 0;
+  display: block;
+  padding: 12px 26px;
+  font-size: 1.2rem;
+  border-radius: 12px;
+  background: #ff6b8b;
+  color: #150818;
+  border: none;
+  cursor: pointer;
+  font-family: "Handjet", sans-serif;
+}
+
+/* export button (same style family) */
+.exportBtn {
+  margin: 12px auto 0;
+  display: none;
+  padding: 12px 26px;
+  font-size: 1.2rem;
+  border-radius: 12px;
+  background: #ffd966;
+  color: #150818;
+  border: none;
+  cursor: pointer;
+  font-family: "Handjet", sans-serif;
+  font-weight: 700;
+}
+</style>
 </head>
 
 <body>
-  <div class="onlineWrap">
-    <div class="onlineCard">
-      <div class="onlineHeader">
-        <div>
-          <h1>Online Top 15</h1>
-          <div class="muted" id="modeLabel"></div>
-        </div>
-        <button class="btn" id="exportBtn" style="display:none;">Export CSV</button>
-      </div>
 
-      <table>
+<div class="page">
+
+  <div class="container">
+    <h1>Kokky's Hot Spring Hop – Online Scoreboard</h1>
+
+    <div class="sub" id="modeText">
+      Showing overall scores (best ever) from Firebase.
+    </div>
+
+    <button class="exportBtn" id="exportBtn">Export CSV</button>
+
+    <div class="tableWrap">
+      <table id="scoreTable">
         <thead>
           <tr>
             <th>#</th>
             <th>Player</th>
-            <th>Score</th>
-            <th>Rank</th>
+            <th>High Score</th>
+            <th>Best Rank</th>
           </tr>
         </thead>
-        <tbody id="scoreBody"></tbody>
+        <tbody></tbody>
       </table>
+    </div>
+
+    <button class="backBtn" onclick="window.location.href='index.html'">
+      Back to Game
+    </button>
+
+    <div class="sub" style="margin-top:10px;">
+      Top 15 overall (online).
     </div>
   </div>
 
-  <script type="module">
-    import { db, authReady } from "./firebase-init.js";
-    import {
-      collection, getDocs, query, orderBy, limit
-    } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+</div>
 
-    function getRankForScore(s) {
-      if (s >= 1000) return "Onsen God";
-      if (s >= 500) return "Onsen Legend";
-      if (s >= 250) return "King of the Onsen";
-      if (s >= 100) return "Onsen Overlord";
-      if (s >= 75) return "Steam Master";
-      if (s >= 50) return "Onsen Ace";
-      if (s >= 25) return "Steam Hopper";
-      return "—";
-    }
+<script type="module">
+/* ===== FIREBASE ===== */
+import { db, authReady } from "./firebase-init.js";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  limit
+} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-    function teamColor(id) {
-      if (id.startsWith("W-")) return "#e8e8e8";
-      if (id.startsWith("R-")) return "#ff6b6b";
-      if (id.startsWith("G-")) return "#6bff8b";
-      if (id.startsWith("B-")) return "#6bb7ff";
-      return "#ffd966"; // Guest/Admin
-    }
+/* ===== REFERENCE PAGE ===== */
+const page = document.querySelector(".page");
 
-    const params = new URLSearchParams(location.search);
-    const isAdminMode = params.get("admin") === "1";
+/* ===== RANKS (SAME AS LOCAL) ===== */
+const RANKS = [
+  { score: 25,   name: "Steam Hopper" },
+  { score: 50,   name: "Onsen Ace" },
+  { score: 75,   name: "Steam Master" },
+  { score: 100,  name: "Onsen Overlord" },
+  { score: 250,  name: "King of the Onsen" },
+  { score: 500,  name: "Onsen Legend" },
+  { score: 1000, name: "Onsen God" }
+];
 
-    document.getElementById("modeLabel").textContent =
-      isAdminMode ? "Admin mode (includes Admin IDs)" : "Student view (hides Admin IDs)";
+function getRankForScore(score) {
+  let best = "—";
+  for (const r of RANKS) {
+    if (score >= r.score) best = r.name;
+  }
+  return best;
+}
 
-    // wait for anonymous login
+function getPlayerColor(playerId) {
+  if (!playerId) return "#ffffff";
+
+  if (playerId === "Guest" || playerId.startsWith("Admin")) {
+    return "#ffd966"; // warm gold
+  }
+
+  const team = playerId[0];
+
+  switch (team) {
+    case "W": return "#f5f5f5";     // soft white
+    case "R": return "#ff6b6b";     // warm red
+    case "G": return "#5fd38d";     // readable green
+    case "B": return "#6fa8ff";     // brighter blue for contrast
+    default:  return "#ffffff";
+  }
+}
+
+function getRankStyle(rank) {
+  switch (rank) {
+    case "Steam Hopper":
+      return { color: "#e6c97a", glow: "0 0 6px rgba(230,201,122,0.6)" };
+
+    case "Onsen Ace":
+      return { color: "#f0d98a", glow: "0 0 8px rgba(240,217,138,0.7)" };
+
+    case "Steam Master":
+      return { color: "#ffe29a", glow: "0 0 10px rgba(255,226,154,0.8)" };
+
+    case "Onsen Overlord":
+      return { color: "#fff2b0", glow: "0 0 14px rgba(255,242,176,0.9)" };
+
+    case "King of the Onsen":
+      return { color: "#ffd966", glow: "0 0 18px rgba(255,217,102,1)" };
+
+    case "Onsen Legend":
+      return { color: "#ffdf85", glow: "0 0 22px rgba(255,223,133,1)" };
+
+    case "Onsen God":
+      return { color: "#fff7cc", glow: "0 0 30px rgba(255,247,204,1.2)" };
+
+    default:
+      return { color: "#ffffff", glow: "none" };
+  }
+}
+
+/* ===== CREATE STARS (SAME FEEL) ===== */
+for (let i = 0; i < 50; i++) {
+  const s = document.createElement("div");
+  s.className = "star";
+  const size = Math.random() * 2 + 1;
+  s.style.width = size + "px";
+  s.style.height = size + "px";
+  s.style.left = Math.random() * 100 + "%";
+  s.style.top  = Math.random() * 60 + "%";
+  s.style.background = Math.random() < 0.7 ? "#ffd966" : "#ffffff";
+  page.appendChild(s);
+}
+
+/* ===== CREATE SNOW (SAME FEEL) ===== */
+for (let i = 0; i < 35; i++) {
+  const f = document.createElement("div");
+  f.className = "snow";
+  const size = Math.random() * 3 + 2;
+  f.style.width = size + "px";
+  f.style.height = size + "px";
+  f.style.left = Math.random() * 100 + "%";
+  f.style.top = -(Math.random() * 120 + 20) + "px";
+  f.style.animationDuration = (Math.random() * 5 + 6) + "s";
+  f.style.animationDelay = Math.random() * 6 + "s";
+  page.appendChild(f);
+}
+
+/* ===== MODE ===== */
+const params = new URLSearchParams(location.search);
+const isAdminMode = params.get("admin") === "1";
+
+const modeText = document.getElementById("modeText");
+modeText.innerHTML = isAdminMode
+  ? "Admin mode (includes Admin IDs).<br>Showing overall scores (best ever) online."
+  : "Student view (hides Admin IDs).<br>Showing overall scores (best ever) online.";
+
+/* ===== LOAD ONLINE SCORES (TOP 15) ===== */
+async function loadOnlineScores() {
+  await authReady;
+
+  // grab extra so filtering still leaves 15
+  const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(60));
+  const snap = await getDocs(q);
+
+  let list = [];
+  snap.forEach(d => list.push(d.data()));
+
+  if (!isAdminMode) {
+    list = list.filter(e => !String(e.id || "").startsWith("Admin"));
+  }
+
+  list = list.slice(0, 15);
+
+  const tbody = document.querySelector("#scoreTable tbody");
+  tbody.innerHTML = "";
+
+  list.forEach((entry, i) => {
+    const tr = document.createElement("tr");
+
+    const playerColor = getPlayerColor(entry.id);
+    const rankName = getRankForScore(Number(entry.score || 0));
+    const rankStyle = getRankStyle(rankName);
+
+    tr.innerHTML = `
+      <td>${i + 1}</td>
+
+      <td style="
+        color: ${playerColor};
+        font-weight: 600;
+      ">
+        ${entry.id}
+      </td>
+
+      <td>${Number(entry.score || 0)}</td>
+
+      <td style="
+        color: ${rankStyle.color};
+        text-shadow: ${rankStyle.glow};
+        font-weight: 600;
+      ">
+        ${rankName}
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+loadOnlineScores();
+
+/* ===== EXPORT CSV (ADMIN ONLY) ===== */
+const exportBtn = document.getElementById("exportBtn");
+if (isAdminMode) {
+  exportBtn.style.display = "block";
+
+  exportBtn.addEventListener("click", async () => {
     await authReady;
 
-    // fetch scores (grab extra so filtering still leaves 15)
-    const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(60));
-    const snap = await getDocs(q);
+    const qAll = query(collection(db, "scores"), orderBy("score", "desc"), limit(500));
+    const snapAll = await getDocs(qAll);
 
-    let rows = [];
-    snap.forEach(d => rows.push(d.data()));
+    let all = [];
+    snapAll.forEach(d => all.push(d.data()));
 
-    // hide Admin for students
-    if (!isAdminMode) {
-      rows = rows.filter(r => !String(r.id || "").startsWith("Admin"));
-    }
+    const csv = [
+      ["rank","playerId","score","updatedAt"].join(","),
+      ...all.map((r, idx) => {
+        const id = String(r.id || "");
+        const score = Number(r.score || 0);
+        const updatedAt = Number(r.updatedAt || 0);
+        return [idx + 1, id, score, updatedAt].join(",");
+      })
+    ].join("\n");
 
-    rows = rows.slice(0, 15);
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
 
-    const body = document.getElementById("scoreBody");
-    body.innerHTML = rows.map((r, i) => {
-      const id = String(r.id || "");
-      const score = Number(r.score || 0);
-      const rank = getRankForScore(score);
-      const color = teamColor(id);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "kokky_scores.csv";
+    a.click();
 
-      return `
-        <tr>
-          <td>${i + 1}</td>
-          <td style="color:${color}; font-weight:800;">${id}</td>
-          <td>${score}</td>
-          <td>${rank}</td>
-        </tr>
-      `;
-    }).join("");
+    URL.revokeObjectURL(url);
+  });
+}
+</script>
 
-    // CSV export (admin only)
-    const exportBtn = document.getElementById("exportBtn");
-    if (isAdminMode) {
-      exportBtn.style.display = "inline-block";
-      exportBtn.addEventListener("click", async () => {
-        const qAll = query(collection(db, "scores"), orderBy("score", "desc"), limit(500));
-        const snapAll = await getDocs(qAll);
-
-        let all = [];
-        snapAll.forEach(d => all.push(d.data()));
-
-        const csv = [
-          ["rank","playerId","score","updatedAt"].join(","),
-          ...all.map((r, idx) => {
-            const id = String(r.id || "");
-            const score = Number(r.score || 0);
-            const updatedAt = Number(r.updatedAt || 0);
-            return [idx + 1, id, score, updatedAt].join(",");
-          })
-        ].join("\n");
-
-        const blob = new Blob([csv], { type: "text/csv" });
-        const url = URL.createObjectURL(blob);
-
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "kokky_scores.csv";
-        a.click();
-
-        URL.revokeObjectURL(url);
-      });
-    }
-  </script>
 </body>
 </html>
