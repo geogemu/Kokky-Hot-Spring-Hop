@@ -272,16 +272,17 @@ const SPAWN_DISTANCE = 270;
 const OB_W = 70;
 
 /* =====================================================
-   ASSETS (LOCKED filenames)
+   ASSETS
 ===================================================== */
 const kokkyImg = new Image(); kokkyImg.src = "kokky.png";
-
-const bambooTopImg = new Image();    bambooTopImg.src = "bamboo_top.png";      // snowy bamboo cap
-const bambooMidImg = new Image();    bambooMidImg.src = "bamboo_mid.png";      // repeatable bamboo
-const bambooBottomImg = new Image(); bambooBottomImg.src = "bamboo_bottom.png"; // snowy rocks cap
-
+const woodImg  = new Image(); woodImg.src  = "wood.png";
 const mountainsImg = new Image(); mountainsImg.src = "mountains.png";
-const steamImg = new Image();     steamImg.src = "steam.png";
+const steamImg = new Image();     steamImg.src     = "steam.png";
+
+let woodPattern = null;
+woodImg.onload = () => {
+  woodPattern = ctx.createPattern(woodImg, "repeat");
+};
 
 /* =====================================================
    BACKGROUND (stars + snow) init (size dependent)
@@ -546,52 +547,31 @@ function drawMountainsAndSteam() {
 }
 
 /* =====================================================
-   DRAW: OBSTACLES (caps + mid)
+   DRAW: OBSTACLES (tiled wood texture)
 ===================================================== */
 function drawObstacle(obs) {
   const H = gameHeight();
 
-  // helper: draw a cap scaled to OB_W, return its height
-  function capH(img) {
-    if (!img || !img.complete || !img.naturalWidth) return 0;
-    return OB_W * (img.naturalHeight / img.naturalWidth);
-  }
+  if (woodPattern) {
+    ctx.save();
+    ctx.fillStyle = woodPattern;
 
-  function drawCap(img, x, y) {
-    const h = capH(img);
-    if (h > 0) ctx.drawImage(img, x, y, OB_W, h);
-    return h;
-  }
+    // top pipe
+    ctx.translate(obs.x, 0);
+    ctx.fillRect(0, 0, OB_W, obs.gapY);
 
-  function drawMid(x, y, h) {
-  if (h <= 0) return;
-  if (!bambooMidImg.complete || !bambooMidImg.naturalWidth) return;
+    // bottom pipe
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.translate(obs.x, obs.gapY + GAP);
+    ctx.fillRect(0, 0, OB_W, H - (obs.gapY + GAP));
 
-  const tileH = OB_W * (bambooMidImg.naturalHeight / bambooMidImg.naturalWidth);
-
-  for (let yy = y; yy < y + h; yy += tileH) {
-    const drawH = Math.min(tileH, (y + h) - yy);
-    ctx.drawImage(bambooMidImg, x, yy, OB_W, drawH);
+    ctx.restore();
+  } else {
+    // fallback
+    ctx.drawImage(woodImg, obs.x, 0, OB_W, obs.gapY);
+    ctx.drawImage(woodImg, obs.x, obs.gapY + GAP, OB_W, H - (obs.gapY + GAP));
   }
 }
-
-  // ---------- TOP OBSTACLE ----------
-  const topH = obs.gapY;
-  const topCapHeight = capH(bambooBottomImg);
-  const topCapY = Math.max(0, topH - topCapHeight);
-
-  drawMid(obs.x, 0, topCapY);
-  drawCap(bambooBottomImg, obs.x, topCapY);
-
-  // ---------- BOTTOM OBSTACLE ----------
-  const bottomY = obs.gapY + GAP;
-  const bottomH = H - bottomY;
-
-  const bottomCapHeight = capH(bambooTopImg);
-  drawCap(bambooTopImg, obs.x, bottomY);
-  drawMid(obs.x, bottomY + bottomCapHeight, bottomH - bottomCapHeight);
-}
-
 
 function checkRankUnlock() {
   let currentRank = null;
