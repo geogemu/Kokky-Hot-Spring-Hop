@@ -514,21 +514,30 @@ function drawMountainsAndSteam() {
   const W = gameWidth();
   const H = gameHeight();
 
-  // farther mountains (background)
+  // mountains (background)
   const mountainH = 160;
   const mountainY = H - 260;
-
   ctx.drawImage(mountainsImg, mountainX, mountainY, W, mountainH);
   ctx.drawImage(mountainsImg, mountainX + W, mountainY, W, mountainH);
 
-  // bottom steam (foreground, slight overlap)
+  // steam/onsen (foreground)
   ctx.globalAlpha = 0.55;
 
-  const STEAM_OVERLAP = 24; // try 12 / 24 / 36 if needed
-  const steamY = (H - 120) - STEAM_OVERLAP;
+  const STEAM_DRAW_H = 120;      // how tall you want it on screen (tweak: 100–160)
+  const STEAM_OVERLAP = 24;      // overlap mountains (tweak: 12–36)
 
-  ctx.drawImage(steamImg, steamX, steamY);
-  ctx.drawImage(steamImg, steamX + W, steamY);
+  const scale = STEAM_DRAW_H / steamImg.height;
+  const tileW = steamImg.width * scale;
+
+  const steamY = (H - STEAM_DRAW_H) - STEAM_OVERLAP;
+
+  // tile seamlessly across the screen
+  let startX = steamX % tileW;
+  if (startX > 0) startX -= tileW;
+
+  for (let x = startX; x < W + tileW; x += tileW) {
+    ctx.drawImage(steamImg, x, steamY, tileW, STEAM_DRAW_H);
+  }
 
   ctx.globalAlpha = 1;
 }
@@ -672,8 +681,13 @@ shootingStars = shootingStars.filter(s => s.life > 0);
     mountainX -= 0.15;
     if (mountainX <= -W) mountainX = 0;
 
-    steamX -= 0.15;
-    if (steamX <= -W) steamX = 0;
+    const STEAM_DRAW_H = 120; // must match draw function
+const scale = STEAM_DRAW_H / steamImg.height;
+const tileW = steamImg.width * scale;
+
+steamX -= 0.15;
+if (steamX <= -tileW) steamX += tileW;
+
   }
 
   // ================= PHYSICS =================
