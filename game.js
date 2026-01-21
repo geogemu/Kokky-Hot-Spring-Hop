@@ -516,7 +516,7 @@ function drawMountainsAndSteam() {
 
   // --- TUNING (only change these later) ---
   const MOUNTAIN_H = 160;
-  const MOUNTAIN_Y = H - 280;   // a bit higher than before
+  const MOUNTAIN_Y = H - 320;   // a bit higher than before
 
   const STEAM_DRAW_H = 180;     // baseline (try 160–220)
   const STEAM_ALPHA  = 0.65;    // baseline (0.55–0.75)
@@ -534,7 +534,7 @@ function drawMountainsAndSteam() {
   const tileW = steamImg.width * scale;
 
   // anchor to bottom, then lift a bit to overlap mountains
-  const steamY = (H - STEAM_DRAW_H) - STEAM_OVERLAP;
+  const steamY = H - STEAM_DRAW_H;
 
   let startX = steamX % tileW;
   if (startX > 0) startX -= tileW;
