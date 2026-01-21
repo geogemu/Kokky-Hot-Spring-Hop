@@ -285,6 +285,38 @@ woodImg.onload = () => {
 };
 
 /* =====================================================
+   JUMP SOUND
+===================================================== */
+const jumpSfx = new Audio("jump.wav");
+jumpSfx.volume = 0.7;
+
+let audioUnlocked = false;
+
+function unlockAudioOnce() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+
+  // unlock audio on mobile (silent play)
+  const prev = jumpSfx.volume;
+  jumpSfx.volume = 0;
+  jumpSfx.play().then(() => {
+    jumpSfx.pause();
+    jumpSfx.currentTime = 0;
+    jumpSfx.volume = prev;
+  }).catch(() => {
+    jumpSfx.volume = prev;
+  });
+}
+
+function playJump() {
+  if (!audioUnlocked) return;
+  try {
+    jumpSfx.currentTime = 0;
+    jumpSfx.play().catch(() => {});
+  } catch (e) {}
+}
+
+/* =====================================================
    BACKGROUND (stars + snow) init (size dependent)
 ===================================================== */
 
@@ -344,6 +376,7 @@ function doJump() {
   }
 
   player.vy = JUMP;
+  playJump();
 
   // hop steam near foot
   hopSteam.push({
@@ -358,20 +391,21 @@ squashSpeed = 0.04;
    
 }
 
+function handleJumpInput(e) {
+  if (e) e.preventDefault?.();
+  unlockAudioOnce();
+  doJump();
+}
+
 window.addEventListener("keydown", e => {
-  if (e.code === "Space") doJump();
+  if (e.code === "Space") handleJumpInput(e);
 });
 
 // Mouse click (desktop)
-canvas.addEventListener("mousedown", e => {
-  e.preventDefault();
-  doJump();
-});
+canvas.addEventListener("mousedown", handleJumpInput);
 
-canvas.addEventListener("touchstart", e => {
-  e.preventDefault();
-  doJump();
-}, { passive: false });
+// Touch (mobile)
+canvas.addEventListener("touchstart", handleJumpInput, { passive: false });
 
 /* =====================================================
    HELPERS
