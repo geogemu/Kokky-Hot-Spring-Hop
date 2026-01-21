@@ -511,8 +511,10 @@ for (const f of snow) {
    DRAW: MOUNTAINS + STEAM
 ===================================================== */
 function drawMountainsAndSteam() {
-  const W = gameWidth();
-  const H = gameHeight();
+  ctx.globalAlpha = 1;
+  ctx.drawImage(steamImg, 0, 0);
+  return;
+}
 
   // mountains (background)
   const mountainH = 160;
