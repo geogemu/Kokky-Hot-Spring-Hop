@@ -218,3 +218,12 @@ body {
     0 0 12px rgba(255, 217, 102, 0.4);
   font-weight: 700;
 }
+
+#titleLogo {
+  display: block;
+  margin: 12px auto 6px auto;
+  max-width: 80%;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 10px rgba(200,220,255,0.6));
+}
