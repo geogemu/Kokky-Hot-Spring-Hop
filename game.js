@@ -514,22 +514,27 @@ function drawMountainsAndSteam() {
   const W = gameWidth();
   const H = gameHeight();
 
+  // --- TUNING (only change these later) ---
+  const MOUNTAIN_H = 160;
+  const MOUNTAIN_Y = H - 280;   // a bit higher than before
+
+  const STEAM_DRAW_H = 180;     // baseline (try 160–220)
+  const STEAM_ALPHA  = 0.65;    // baseline (0.55–0.75)
+  const STEAM_OVERLAP = 18;     // overlap mountains a bit (10–30)
+  // ---------------------------------------
+
   // mountains (background)
-  const mountainH = 160;
-  const mountainY = H - 260;
-  ctx.drawImage(mountainsImg, mountainX, mountainY, W, mountainH);
-  ctx.drawImage(mountainsImg, mountainX + W, mountainY, W, mountainH);
+  ctx.drawImage(mountainsImg, mountainX,     MOUNTAIN_Y, W, MOUNTAIN_H);
+  ctx.drawImage(mountainsImg, mountainX + W, MOUNTAIN_Y, W, MOUNTAIN_H);
 
-  // steam/onsen (foreground) — tile using the image's REAL width
-  ctx.globalAlpha = 0.95;
-
-const STEAM_DRAW_H = 240;   // show full water
-const STEAM_OVERLAP = -15; // hide the hard line
+  // steam/onsen (foreground) - tile using real width
+  ctx.globalAlpha = STEAM_ALPHA;
 
   const scale = STEAM_DRAW_H / steamImg.height;
   const tileW = steamImg.width * scale;
 
-  const steamY = H - STEAM_DRAW_H; // always keep water visible at bottom
+  // anchor to bottom, then lift a bit to overlap mountains
+  const steamY = (H - STEAM_DRAW_H) - STEAM_OVERLAP;
 
   let startX = steamX % tileW;
   if (startX > 0) startX -= tileW;
@@ -676,19 +681,19 @@ shootingStars.forEach(s => {
 // remove dead stars
 shootingStars = shootingStars.filter(s => s.life > 0);
 
-  // ================= PARALLAX =================
-  if (!gameOver) {
-    mountainX -= 0.15;
-    if (mountainX <= -W) mountainX = 0;
+// ================= PARALLAX =================
+if (!gameOver) {
+  mountainX -= 0.15;
+  if (mountainX <= -W) mountainX = 0;
 
-    const STEAM_DRAW_H = 240; // must match draw function
-const scale = STEAM_DRAW_H / steamImg.height;
-const tileW = steamImg.width * scale;
+  // MUST match STEAM_DRAW_H in drawMountainsAndSteam()
+  const STEAM_DRAW_H = 180;
+  const scale = STEAM_DRAW_H / steamImg.height;
+  const tileW = steamImg.width * scale;
 
-steamX -= 0.15;
-if (steamX <= -tileW) steamX += tileW;
-
-  }
+  steamX -= 0.15;
+  if (steamX <= -tileW) steamX += tileW;
+}
 
   // ================= PHYSICS =================
   if (hasPlayer && !gameOver) {
