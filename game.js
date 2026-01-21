@@ -523,15 +523,14 @@ function drawMountainsAndSteam() {
   // steam/onsen (foreground) — tile using the image's REAL width
   ctx.globalAlpha = 0.55;
 
-  const STEAM_DRAW_H = 150;   // how tall on screen (try 120 first)
-  const STEAM_OVERLAP = 40;   // overlap into mountains (12–36)
+  const STEAM_DRAW_H = 160;
+  const STEAM_OVERLAP = -20; // negative = pull UP
 
   const scale = STEAM_DRAW_H / steamImg.height;
   const tileW = steamImg.width * scale;
 
-  const steamY = (H - STEAM_DRAW_H) - STEAM_OVERLAP;
+  const steamY = (H - STEAM_DRAW_H) + STEAM_OVERLAP; // <-- fixed
 
-  // start tiling from a negative position so the whole screen is covered
   let startX = steamX % tileW;
   if (startX > 0) startX -= tileW;
 
