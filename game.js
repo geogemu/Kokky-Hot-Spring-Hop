@@ -254,6 +254,7 @@ changePlayerBtn.addEventListener("click", () => {
 
   obstacles = [];
   spawnX = 0;
+  deathFade = 0;   // ← FIX
 
   // reset overlay UI
   preview.textContent = "";
