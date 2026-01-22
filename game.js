@@ -270,7 +270,7 @@ const GAP = 150;
 let SPEED = 2.5;
 const SPAWN_DISTANCE = 270;
 
-const OB_W = 128;
+const OB_W = 96;
 
 /* =====================================================
    ASSETS
