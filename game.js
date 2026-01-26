@@ -565,25 +565,17 @@ function drawMountainsAndSteam() {
 function drawObstacle(obs) {
   const H = gameHeight();
 
-  if (woodPattern) {
-    ctx.save();
-    ctx.fillStyle = woodPattern;
+  // top
+  ctx.drawImage(woodImg, obs.x, 0, OB_W, obs.gapY);
 
-    // top pipe
-    ctx.translate(obs.x, 0);
-    ctx.fillRect(0, 0, OB_W, obs.gapY);
-
-    // bottom pipe
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    ctx.translate(obs.x, obs.gapY + GAP);
-    ctx.fillRect(0, 0, OB_W, H - (obs.gapY + GAP));
-
-    ctx.restore();
-  } else {
-    // fallback
-    ctx.drawImage(woodImg, obs.x, 0, OB_W, obs.gapY);
-    ctx.drawImage(woodImg, obs.x, obs.gapY + GAP, OB_W, H - (obs.gapY + GAP));
-  }
+  // bottom
+  ctx.drawImage(
+    woodImg,
+    obs.x,
+    obs.gapY + GAP,
+    OB_W,
+    H - (obs.gapY + GAP)
+  );
 }
 
 function checkRankUnlock() {
