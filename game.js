@@ -20,7 +20,7 @@ let DPR = 1;
 
 function resizeCanvas() {
   const rect = canvas.getBoundingClientRect();
-  DPR = window.devicePixelRatio || 1;
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
 
   // internal resolution
   canvas.width = Math.round(rect.width * DPR);
@@ -775,6 +775,9 @@ if (!gameOver) {
       }
     }
   }
+
+  // remove obstacles that are far off-screen (prevents lag)
+obstacles = obstacles.filter(o => o.x > -OB_W - 100);
 
   // ================= FLOOR / CEILING =================
   if (!gameOver && hasPlayer) {
