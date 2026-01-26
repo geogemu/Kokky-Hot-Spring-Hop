@@ -416,11 +416,10 @@ const maxY = H - GAP - 180;      // allow lower gaps
 
 let gapY = Math.random() * (maxY - minY) + minY;
 
-// small bias so it doesn't stay centered
+// push some gaps more toward top or bottom
 if (Math.random() < 0.5) {
-  gapY += Math.random() * 60 - 30;
+  gapY += Math.random() * 120 - 60; // wider swing
 }
-
 
   obstacles.push({
     x: spawnX,
