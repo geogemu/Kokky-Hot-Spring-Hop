@@ -564,17 +564,35 @@ function drawMountainsAndSteam() {
 function drawObstacle(obs) {
   const H = gameHeight();
 
-  // top
-  ctx.drawImage(woodImg, obs.x, 0, OB_W, obs.gapY);
+  // draw a tiled column using repeated drawImage (stable on mobile)
+  drawTiledColumn(obs.x, 0, OB_W, obs.gapY);
+  drawTiledColumn(obs.x, obs.gapY + GAP, OB_W, H - (obs.gapY + GAP));
+}
 
-  // bottom
-  ctx.drawImage(
-    woodImg,
-    obs.x,
-    obs.gapY + GAP,
-    OB_W,
-    H - (obs.gapY + GAP)
-  );
+// tiles woodImg vertically (and horizontally if needed)
+function drawTiledColumn(x, y, w, h) {
+  if (!woodImg || !woodImg.complete) return;
+
+  const tileW = woodImg.width;
+  const tileH = woodImg.height;
+
+  // if image hasn't loaded dimensions yet, bail safely
+  if (!tileW || !tileH) return;
+
+  for (let yy = y; yy < y + h; yy += tileH) {
+    const sliceH = Math.min(tileH, (y + h) - yy);
+
+    // usually OB_W is smaller than tileW, but handle both cases
+    for (let xx = x; xx < x + w; xx += tileW) {
+      const sliceW = Math.min(tileW, (x + w) - xx);
+
+      ctx.drawImage(
+        woodImg,
+        0, 0, sliceW, sliceH,   // source slice
+        xx, yy, sliceW, sliceH  // destination slice
+      );
+    }
+  }
 }
 
 function checkRankUnlock() {
