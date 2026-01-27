@@ -837,7 +837,7 @@ function drawBanner() {
 }
 
   const cardW = 220;
-  const cardH = 54;
+  const cardH = 64;
   const x = (W - cardW) / 2;
   const y = banner.y;
 
