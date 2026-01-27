@@ -307,7 +307,7 @@ function initBackground() {
   const H = gameHeight();
 
 // twinkling stars (visible but calm)
-stars = Array.from({ length: 70 }, () => ({
+stars = Array.from({ length: 35 }, () => ({
   x: Math.random() * W,
   y: Math.random() * H * 0.6,
   r: Math.random() * 1.6 + 0.8,
@@ -453,27 +453,16 @@ function drawSkyAndMoon() {
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
 
-// stars (twinkling with glow – magical)
+// stars (static, calm – no twinkle, no glow)
 for (const s of stars) {
-  s.phase += s.twinkleSpeed;
-
-  const alpha =
-    s.baseAlpha + Math.sin(s.phase) * 0.4; // stronger shimmer
-
-  ctx.save();
-  ctx.globalAlpha = alpha;
-
-  // stronger, softer glow
-  ctx.shadowColor = s.c;
-  ctx.shadowBlur = 0;
-
+  ctx.globalAlpha = s.baseAlpha;
   ctx.fillStyle = s.c;
+
   ctx.beginPath();
   ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
   ctx.fill();
-
-  ctx.restore();
 }
+ctx.globalAlpha = 1;
 
   // moon with warm color + slight texture (YOUR CODE)
   ctx.save();
