@@ -31,7 +31,6 @@ function resizeCanvas() {
 
   // resize-dependent visuals
   initBackground();
-  buildBambooStrip();
 }
 
 function gameWidth()  { return canvas.width / DPR; }
@@ -547,7 +546,7 @@ function drawMountainsAndSteam() {
    BAMBOO STRIP
 ===================================================== */
 function buildBambooStrip() {
-  if (typeof woodImg === "undefined" || !woodImg || !woodImg.complete) return;
+  if (!woodImg.complete) return;
 
   bambooStripH = Math.max(1200, Math.ceil(gameHeight() + 400)); // tall enough
   bambooStrip = document.createElement("canvas");
