@@ -575,7 +575,7 @@ function checkRankUnlock() {
   banner = {
     text: currentRank.name,
     y: -60,
-    life: 180,   // ~3 seconds
+    life: 120,   // ~2 seconds
     alpha: 1,
     sparkles: createBannerSparkles()
   };
@@ -598,7 +598,6 @@ function createBannerSparkles(count = 12) {
    MAIN LOOP
 ===================================================== */
 function loop() {
-console.log("loop running", hasPlayer, score);
    // ===== ALWAYS UPDATE TOP UI =====
 document.getElementById("scoreValue").textContent = score;
 document.getElementById("bestValue").textContent = bestScore;
@@ -825,20 +824,20 @@ function drawBanner() {
   const W = gameWidth();
 
   // target position (near moon height)
-  const targetY = 70;
+  const targetY = 40;
 
   // slide down gently
   if (banner.y < targetY) {
     banner.y += 2.5;
   }
 
-  // fade out during last second (~60 frames)
-  if (banner.life < 60) {
-    banner.alpha = banner.life / 60;
-  }
+  // fade out (~35 frames)
+  if (banner.life < 35) {
+  banner.alpha = banner.life / 35;
+}
 
-  const cardW = 260;
-  const cardH = 64;
+  const cardW = 220;
+  const cardH = 54;
   const x = (W - cardW) / 2;
   const y = banner.y;
 
@@ -878,12 +877,9 @@ ctx.font = "24px Handjet";
 ctx.fillText(banner.text, W / 2, y + 46);
 
 
-// === STATIC SPARKLES (ELEGANT GLOW) ===
+// === STATIC SPARKLES (removed shimmer) ===
 banner.sparkles.forEach(s => {
-  s.pulse += 0.04; // slow shimmer
-  const alpha = s.a + Math.sin(s.pulse) * 0.15;
-
-  ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+  ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
   ctx.beginPath();
   ctx.arc(
     x + s.x * cardW,
