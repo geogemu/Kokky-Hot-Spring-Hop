@@ -61,16 +61,15 @@ body {
   margin-top: 6px;
 }
 
-/* Canvas scales visually but keeps internal resolution */
+/* Canvas
 #game {
   display: block;
   width: 100%;
-  max-width: 420px;     /* desktop cap */
-  aspect-ratio: 2 / 3;  /* portrait game */
+  max-width: 480px;
+  height: 100vh;          /* fill screen height */
   touch-action: manipulation;
   position: relative;
   z-index: 1;
-  flex-shrink: 0;
 }
 
 /* =====================
