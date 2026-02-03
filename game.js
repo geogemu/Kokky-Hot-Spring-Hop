@@ -1,10 +1,23 @@
-import { db, auth, authReady } from "./firebase-init.js?v=20260204d";
+import { db, auth, authReady } from "./firebase-init.js";
 
 import {
   doc,
   getDocFromServer,
   setDoc
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+// ===== SAFE LOCALSTORAGE HELPERS (PASTE HERE) =====
+function safeGet(key, fallback = null) {
+  try { return localStorage.getItem(key) ?? fallback; }
+  catch { return fallback; }
+}
+
+function safeSet(key, value) {
+  try { localStorage.setItem(key, value); return true; }
+  catch { return false; }
+}
+// ===============================================
+
 
 /* =====================================================
    CANVAS + DPR SETUP (LOCKED)
@@ -62,7 +75,7 @@ let started = false;
 let gameOver = false;
 
 let score = 0;
-let bestScore = Number(localStorage.getItem("bestScore") || 0);
+let bestScore = Number(safeGet("bestScore", "0"));
 let runStartBest = bestScore;
 
 let lastSpeedLevel = 0;
@@ -585,7 +598,7 @@ for (const obs of obstacles) {
 
     if (score > bestScore) {
       bestScore = score;
-      localStorage.setItem("bestScore", String(bestScore));
+      safeSet("bestScore", String(bestScore));
     }
   }
 
@@ -755,10 +768,10 @@ function askName3() {
 /* =====================================================
    PUBLIC DEVICE KEY
 ===================================================== */
-let publicKey = localStorage.getItem("publicKey");
+let publicKey = safeGet("publicKey");
 if (!publicKey) {
   publicKey = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now());
-  localStorage.setItem("publicKey", publicKey);
+  safeSet("publicKey", publicKey);
 }
 
 /* =====================================================
