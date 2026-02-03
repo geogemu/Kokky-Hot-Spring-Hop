@@ -767,7 +767,7 @@ if (!publicKey) {
 async function saveBestOnlinePublic(name3, scoreValue) {
   try {
     await authReady;
-if (!auth.currentUser) throw new Error("No auth user; cannot write to scores_public.");
+    if (!auth.currentUser) throw new Error("No auth user; cannot write to scores_public.");
 
     const ref = doc(db, "scores_public", publicKey);
     const snap = await getDoc(ref);
@@ -782,8 +782,14 @@ if (!auth.currentUser) throw new Error("No auth user; cannot write to scores_pub
       updatedAt: Date.now()
     }, { merge: true });
 
+    // TEMP: confirm success on iPhone
+    alert(`✅ Online save OK: ${name3} ${scoreValue}`);
+
   } catch (err) {
     console.error("saveBestOnlinePublic error:", err);
+
+    // TEMP: show real failure reason on iPhone
+    alert(`❌ Online save FAILED: ${err.message || err}`);
   }
 }
 
