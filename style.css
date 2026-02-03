@@ -1,81 +1,28 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100dvh;
+  height: 100%;
   overflow: hidden; /* NO SCROLL */
 }
 
 body {
-  margin: 0;
-  background: #000814;                 /* match your sky bottom */
+  background: #02040b;
   font-family: "Handjet", sans-serif;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;             /* centers vertically */
-  height: 100dvh;                      /* real mobile height */
-  overflow: hidden;
-  position: relative;
 }
 
-/* ===== TOP UI (Score/Best at top center) ===== */
-#topUI {
-  position: absolute;
-  top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 20;
-  pointer-events: none; /* doesn’t block taps on canvas */
-}
-
-#scoreRow {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #ffffff;
-  text-align: center;
-  pointer-events: auto;
-}
-
-#scoreValue,
-#bestValue {
-  color: #ffd966;
-  text-shadow:
-    0 0 6px rgba(255, 217, 102, 0.8),
-    0 0 12px rgba(255, 217, 102, 0.4);
-  font-weight: 700;
-}
-
-/* ===== SCOREBOARD BUTTON (if you still have it) ===== */
-#scoreboardLink,
-#scoreboardBtn {
-  text-decoration: none;
-  border: none;
-  border-radius: 10px;
-  font-family: "Handjet", sans-serif;
-  font-size: 0.9rem;
-  padding: 6px 10px;
-  min-height: 32px;
-  min-width: 96px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  background: #ffffff;
-  color: #050814;
-  margin-top: 6px;
-}
-
-/* Canvas */
+/* Canvas scales visually but keeps internal resolution */
 #game {
   display: block;
-
-  /* fit inside the phone WITHOUT cropping */
-  width: min(100vw, calc(100dvh * 2 / 3));
-  height: min(100dvh, calc(100vw * 3 / 2));
-
-  aspect-ratio: 2 / 3;
+  width: 100%;
+  max-width: 480px;     /* desktop cap */
+  aspect-ratio: 2 / 3;  /* portrait game */
   touch-action: manipulation;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
 }
 
 /* =====================
@@ -126,3 +73,63 @@ body {
 }
 
 .hidden { display: none; }
+
+/* ===== TOP UI (same original layout) ===== */
+#topBar {
+  width: 100%;
+  max-width: 480px;
+  padding: 4px 8px 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* Scoreboard button */
+#scoreboardLink,
+#scoreboardBtn {
+  text-decoration: none;
+  border: none;
+  border-radius: 10px;
+  font-family: "Handjet", sans-serif;
+  font-size: 0.9rem;
+  padding: 6px 10px;
+  min-height: 32px;
+  min-width: 96px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+
+  background: #ffffff;
+  color: #050814;
+}
+
+/* Optional spacer on the right side so the Scoreboard stays left */
+#topBarRightSpacer {
+  min-width: 96px;   /* matches scoreboard button width */
+  min-height: 32px;
+}
+
+/* Score row under the top bar (same as original) */
+#scoreRow {
+  width: 100%;
+  max-width: 480px;
+  padding: 0 8px 4px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  position: relative;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+#scoreValue,
+#bestValue {
+  color: #ffd966; /* warm gold */
+  text-shadow:
+    0 0 6px rgba(255, 217, 102, 0.8),
+    0 0 12px rgba(255, 217, 102, 0.4);
+  font-weight: 700;
+}
