@@ -81,6 +81,7 @@ let banner = null;
 let lastRankShown = null;
 
 let deathFade = 0;
+let submittedThisDeath = false;
 
 /* =====================================================
    RANKS (LOCKED)
@@ -255,6 +256,7 @@ function resetGame() {
 SPEED = 2.5;
 lastSpeedLevel = 0;
 deathFade = 0;
+submittedThisDeath = false;
 
    lastRankShown = null;
 
@@ -607,11 +609,11 @@ for (const obs of obstacles) {
     if (hitsTop || hitsBottom) {
       gameOver = true;
 
-if (score > runStartBest) {
-  const name3 = askName3();
-  if (name3) {
+if (score > runStartBest && !submittedThisDeath) {
+  submittedThisDeath = true;
+  askName3().then(name3 => {
     saveBestOnlinePublic(name3, score);
-  }
+  });
 }
 
     }
@@ -626,11 +628,11 @@ if (!gameOver && hasPlayer) {
   if (player.y < 0 || player.y + player.h > H) {
     gameOver = true;
 
-if (score > runStartBest) {
-  const name3 = askName3();
-  if (name3) {
+if (score > runStartBest && !submittedThisDeath) {
+  submittedThisDeath = true;
+  askName3().then(name3 => {
     saveBestOnlinePublic(name3, score);
-  }
+  });
 }
 
   }
@@ -696,14 +698,58 @@ drawBanner();
    3-CHAR NAME PROMPT
 ===================================================== */
 function askName3() {
-  const raw = prompt("ENTER NAME (3 chars: A–Z / 0–9)") || "";
-  const name = raw.toUpperCase().trim();
+  return new Promise(resolve => {
+    const modal = document.getElementById("nameModal");
+    const input = document.getElementById("nameInput");
+    const saveBtn = document.getElementById("nameSaveBtn");
+    const err = document.getElementById("nameError");
 
-  if (!/^[A-Z0-9]{3}$/.test(name)) {
-    alert("Use exactly 3 letters or numbers (A–Z, 0–9).");
-    return null;
-  }
-  return name;
+    // show modal
+    modal.classList.remove("hidden");
+    err.classList.add("hidden");
+    input.value = "";
+    input.focus();
+
+    function clean(s) {
+      return (s || "").toUpperCase().trim().replace(/[^A-Z0-9]/g, "");
+    }
+
+    function validateAndSave() {
+      const name = clean(input.value);
+
+      if (!/^[A-Z0-9]{3}$/.test(name)) {
+        err.classList.remove("hidden");
+        input.focus();
+        input.select();
+        return;
+      }
+
+      // success: close + resolve
+      modal.classList.add("hidden");
+      err.classList.add("hidden");
+
+      // remove listeners to avoid duplicates
+      saveBtn.onclick = null;
+      input.oninput = null;
+      input.onkeydown = null;
+
+      resolve(name);
+    }
+
+    // live cleanup while typing
+    input.oninput = () => {
+      const cleaned = clean(input.value).slice(0, 3);
+      if (input.value !== cleaned) input.value = cleaned;
+      if (err && !err.classList.contains("hidden")) err.classList.add("hidden");
+    };
+
+    // Enter key submits
+    input.onkeydown = (e) => {
+      if (e.key === "Enter") validateAndSave();
+    };
+
+    saveBtn.onclick = validateAndSave;
+  });
 }
 
 /* =====================================================
