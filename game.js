@@ -97,6 +97,15 @@ let deathFade = 0;
 let submittedThisDeath = false;
 
 /* =====================================================
+   PUBLIC DEVICE KEY
+===================================================== */
+let publicKey = safeGet("publicKey");
+if (!publicKey) {
+  publicKey = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now());
+  safeSet("publicKey", publicKey);
+}
+
+/* =====================================================
    RANKS (LOCKED)
 ===================================================== */
 const RANKS = [
@@ -763,15 +772,6 @@ function askName3() {
     // Save button submits
     saveBtn.onclick = validateAndSave;
   });
-}
-
-/* =====================================================
-   PUBLIC DEVICE KEY
-===================================================== */
-let publicKey = safeGet("publicKey");
-if (!publicKey) {
-  publicKey = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now());
-  safeSet("publicKey", publicKey);
 }
 
 /* =====================================================
