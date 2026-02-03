@@ -1,7 +1,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%;
+  height: 100dvh;
   overflow: hidden; /* NO SCROLL */
 }
 
@@ -11,6 +11,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   position: relative;
 }
 
@@ -66,7 +67,11 @@ body {
   display: block;
   width: 100%;
   max-width: 480px;
-  height: 100vh;
+
+  aspect-ratio: 2 / 3;   /* your real camera */
+  height: auto;
+
+  max-height: 100dvh;   /* mobile safe */
   touch-action: manipulation;
 }
 
