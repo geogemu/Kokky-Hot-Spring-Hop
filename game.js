@@ -1,4 +1,4 @@
-import { db, auth, authReady } from "./firebase-init.js";
+import { db, auth, authReady } from "./firebase-init.js?v=20260204d";
 
 import {
   doc,
