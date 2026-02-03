@@ -2,7 +2,7 @@ import { db, auth, authReady } from "./firebase-init.js";
 
 import {
   doc,
-  getDoc,
+  getDocFromServer,
   setDoc
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
@@ -770,7 +770,7 @@ async function saveBestOnlinePublic(name3, scoreValue) {
     if (!auth.currentUser) throw new Error("No auth user; cannot write to scores_public.");
 
     const ref = doc(db, "scores_public", publicKey);
-    const snap = await getDoc(ref);
+    const snap = await getDocFromServer(ref);
     const prev = snap.exists() ? (snap.data().score || 0) : 0;
 
     // only update if improved
