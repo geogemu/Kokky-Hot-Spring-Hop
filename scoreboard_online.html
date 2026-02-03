@@ -178,11 +178,12 @@ td {
 import { db, authReady } from "./firebase-init.js";
 import {
   collection,
-  getDocs,
   query,
   orderBy,
-  limit
+  limit,
+  getDocsFromServer
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
 
 /* ===== REFERENCE PAGE ===== */
 const page = document.querySelector(".page");
@@ -265,29 +266,30 @@ if (isAdminMode) exportBtn.style.display = "block";
 async function loadOnlineScores() {
   await authReady;
 
-  // IMPORTANT: public mode collection
-  const q = query(
-    collection(db, "scores_public"),
-    orderBy("score", "desc"),
-    limit(15)
-  );
+ // IMPORTANT: public mode collection
+const q = query(
+  collection(db, "scores_public"),
+  orderBy("score", "desc"),
+  limit(15)
+);
 
-  const snap = await getDocs(q);
+// FORCE server fetch (no cached results)
+const snap = await getDocsFromServer(q);
 
-  const tbody = document.querySelector("#scoreTable tbody");
-  tbody.innerHTML = "";
+const tbody = document.querySelector("#scoreTable tbody");
+tbody.innerHTML = "";
 
-  let i = 0;
-  snap.forEach(docSnap => {
-    i++;
-    const entry = docSnap.data();
+let i = 0;
+snap.forEach(docSnap => {
+  i++;
+  const entry = docSnap.data();
 
-    const name = String(entry.name || "---");
-    const sc = Number(entry.score || 0);
+  const name = String(entry.name || "---");
+  const sc = Number(entry.score || 0);
 
-    const rankName = getRankForScore(sc);
-    const rankStyle = getRankStyle(rankName);
-
+  const rankName = getRankForScore(sc);
+  const rankStyle = getRankStyle(rankName);
+  
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${i}</td>
