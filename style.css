@@ -61,15 +61,13 @@ body {
   margin-top: 6px;
 }
 
-/* Canvas
+/* Canvas */
 #game {
   display: block;
   width: 100%;
   max-width: 480px;
-  height: 100vh;          /* fill screen height */
+  height: 100vh;
   touch-action: manipulation;
-  position: relative;
-  z-index: 1;
 }
 
 /* =====================
