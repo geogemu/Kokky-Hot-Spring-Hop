@@ -318,7 +318,7 @@ if (isAdminMode) {
       limit(500)
     );
 
-    const snapAll = await getDocs(qAll);
+    const snapAll = await getDocsFromServer(qAll);
 
     const all = [];
     snapAll.forEach(d => {
