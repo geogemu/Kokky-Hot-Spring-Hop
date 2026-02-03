@@ -133,3 +133,86 @@ body {
     0 0 12px rgba(255, 217, 102, 0.4);
   font-weight: 700;
 }
+
+/* =========================
+   NAME MODAL (NO SKIP)
+========================= */
+#nameModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+#nameModal.hidden { display: none; }
+
+.nameModalCard {
+  width: 86%;
+  max-width: 420px;
+  background: #121428;
+  border-radius: 18px;
+  padding: 18px 16px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.85);
+  color: #f4f4ff;
+  text-align: center;
+}
+
+.nameModalTitle {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.nameModalSub {
+  font-size: 1.1rem;
+  opacity: 0.85;
+  margin-bottom: 12px;
+}
+
+#nameInput {
+  width: 140px;
+  text-align: center;
+  font-size: 2rem;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 2px solid rgba(255,255,255,0.15);
+  background: #0b0d1a;
+  color: #ffffff;
+  outline: none;
+  font-family: "Handjet", sans-serif;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+#nameInput:focus {
+  border-color: #ff6b8b;
+}
+
+.nameError {
+  margin-top: 10px;
+  font-size: 1.05rem;
+  color: #ffd966;
+}
+
+.nameError.hidden { display: none; }
+
+.nameModalBtns {
+  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+.nameSaveBtn {
+  border: none;
+  border-radius: 14px;
+  padding: 12px 18px;
+  min-width: 140px;
+  background: #ff6b8b;
+  color: #150818;
+  font-family: "Handjet", sans-serif;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
