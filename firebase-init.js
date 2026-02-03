@@ -1,6 +1,10 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+import {
+  getAuth,
+  signInAnonymously,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBRYJTS1QLa9JZgZ-hl9XAtY06-reXoZTQ",
@@ -11,12 +15,22 @@ const firebaseConfig = {
   appId: "1:526923945723:web:d4aa57c2628cf6a7ad425e"
 };
 
-// initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// export database + auth so other files can use them
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 
-// sign in anonymously (auto, no popup)
-export const authReady = signInAnonymously(auth).catch(console.error);
+// resolves ONLY when we truly have a signed-in user
+export const authReady = new Promise((resolve, reject) => {
+  const unsub = onAuthStateChanged(auth, (user) => {
+    if (user) {
+      unsub();
+      resolve(user);
+    }
+  });
+
+  signInAnonymously(auth).catch((err) => {
+    console.error("Anonymous auth failed:", err);
+    reject(err);
+  });
+});
