@@ -15,7 +15,7 @@
 
   <!-- TOP BAR -->
 <div id="topBar">
-  <a id="scoreboardLink" href="scoreboard.html">Scoreboard</a>
+  <a id="scoreboardLink" href="scoreboard_online.html">Scoreboard</a>
 
   <div id="playerBox">
     <span id="playerIdLabel">Player: —</span>
@@ -31,32 +31,13 @@
 
   <canvas id="game"></canvas>
 
-  <!-- PLAYER SELECT OVERLAY -->
-  <div id="playerOverlay" class="overlay">
-    <div class="playerBox">
-        <img id="titleLogo" src="title.png" alt="Kokky's Hot Spring Hop">
-      <h2>Select Player</h2>
-
-      <div class="teamGrid">
-        <button class="teamBtn white" data-team="W">White</button>
-        <button class="teamBtn red" data-team="R">Red</button>
-        <button class="teamBtn green" data-team="G">Green</button>
-        <button class="teamBtn blue" data-team="B">Blue</button>
-
-        <button class="teamBtn guest" data-team="Guest">Guest</button>
-        <button class="teamBtn dev" data-team="Dev">Devs</button>
-      </div>
-
-      <div id="idSection" class="hidden">
-        <div class="sectionTitle">Choose ID</div>
-        <div id="idList"></div>
-      </div>
-
-      <div id="playerPreview"></div>
-
-      <button id="playBtn" class="playBtn hidden">Play!</button>
-    </div>
+<!-- TITLE OVERLAY -->
+<div id="playerOverlay" class="overlay">
+  <div class="playerBox">
+    <img id="titleLogo" src="title.png" alt="Kokky's Hot Spring Hop">
+    <button id="playBtn" class="playBtn">Play!</button>
   </div>
+</div>
 
   <script type="module" src="game.js?v=8"></script>
 </body>
