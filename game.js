@@ -704,7 +704,6 @@ function askName3() {
     const saveBtn = document.getElementById("nameSaveBtn");
     const err = document.getElementById("nameError");
 
-    // show modal
     modal.classList.remove("hidden");
     err.classList.add("hidden");
     input.value = "";
@@ -721,10 +720,10 @@ function askName3() {
         err.classList.remove("hidden");
         input.focus();
         input.select();
-        return;
+        return; // DO NOT CLOSE
       }
 
-      // success: close + resolve
+      // success
       modal.classList.add("hidden");
       err.classList.add("hidden");
 
@@ -736,18 +735,19 @@ function askName3() {
       resolve(name);
     }
 
-    // live cleanup while typing
+    // live cleanup while typing (keeps it 0-3 chars, A-Z/0-9 only)
     input.oninput = () => {
       const cleaned = clean(input.value).slice(0, 3);
       if (input.value !== cleaned) input.value = cleaned;
-      if (err && !err.classList.contains("hidden")) err.classList.add("hidden");
+      if (!err.classList.contains("hidden")) err.classList.add("hidden");
     };
 
-    // Enter key submits
+    // Enter submits
     input.onkeydown = (e) => {
       if (e.key === "Enter") validateAndSave();
     };
 
+    // Save button submits
     saveBtn.onclick = validateAndSave;
   });
 }
