@@ -35,6 +35,22 @@
   </div>
 </div>
 
+<!-- NAME ENTRY MODAL (NO SKIP) -->
+<div id="nameModal" class="hidden">
+  <div class="nameModalCard">
+    <div class="nameModalTitle">New High Score!</div>
+    <div class="nameModalSub">Enter your name (3 characters)</div>
+
+    <input id="nameInput" type="text" maxlength="3" autocapitalize="characters" autocomplete="off" />
+
+    <div id="nameError" class="nameError hidden">Use exactly 3 letters/numbers (A–Z, 0–9).</div>
+
+    <div class="nameModalBtns">
+      <button id="nameSaveBtn" class="nameSaveBtn">Save</button>
+    </div>
+  </div>
+</div>
+
   <script type="module" src="game.js?v=8"></script>
 </body>
 </html>
