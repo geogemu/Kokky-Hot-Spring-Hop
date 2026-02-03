@@ -6,10 +6,6 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-import {
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-
 /* =====================================================
    CANVAS + DPR SETUP (LOCKED)
 ===================================================== */
@@ -52,37 +48,12 @@ resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
 /* =====================================================
-   PLAYER SELECT OVERLAY (LOCKED)
+   PLAY BUTTON
 ===================================================== */
 const overlay = document.getElementById("playerOverlay");
-const teamButtons = document.querySelectorAll(".teamBtn");
-const idSection = document.getElementById("idSection");
-const idList = document.getElementById("idList");
-const preview = document.getElementById("playerPreview");
 const playBtn = document.getElementById("playBtn");
-const scoreEl = document.getElementById("score");
-const bestEl = document.getElementById("best");
-const playerIdLabel = document.getElementById("playerIdLabel");
-const changePlayerBtn = document.getElementById("changePlayerBtn");
 
-// restore player label on reload
-const savedPlayer = localStorage.getItem("playerId");
-if (savedPlayer) {
-  playerIdLabel.textContent = "Player: " + savedPlayer;
-}
-
-let selectedTeam = null;
-let selectedId = null;
 let hasPlayer = false;
-
-const TEAM_IDS = {
-  W: ["5","8","9","18","19","22","28","29","30","34","A","B"],
-  R: ["1","4","6","7","11","13","20","21","27","31","40","A","B"],
-  G: ["10","12","14","23","24","26","35","36","37","39","A","B"],
-  B: ["2","3","15","16","17","25","32","33","38","41","A","B"],
-  Guest: ["0"],
-  Dev: ["G","S","J"]
-};
 
 /* =====================================================
    GAME STATE
@@ -91,7 +62,8 @@ let started = false;
 let gameOver = false;
 
 let score = 0;
-let bestScore = 0;
+let bestScore = Number(localStorage.getItem("bestScore") || 0);
+let runStartBest = bestScore;
 
 let lastSpeedLevel = 0;
 
@@ -109,18 +81,6 @@ let banner = null;
 let lastRankShown = null;
 
 let deathFade = 0;
-
-/* ===== PLAYER SETTER ===== */
-function setPlayer(playerId) {
-  localStorage.setItem("playerId", playerId);
-  playerIdLabel.textContent = "Player: " + playerId;
-
-// load best score
-  const savedBoard = JSON.parse(localStorage.getItem("scoreboard") || "[]");
-  const entry = savedBoard.find(e => e.id === playerId);
-  bestScore = entry ? entry.score : 0;
-
-}
 
 /* =====================================================
    RANKS (LOCKED)
@@ -143,17 +103,14 @@ function getRankForScore(score) {
   return best;
 }
 
-
 /* =====================================================
-   PLAYER SELECT OVERLAY CONTROL
+   TITLE OVERLAY CONTROL
 ===================================================== */
 function showOverlayOnLoad() {
-  // Always force player selection on page load
   hasPlayer = false;
   started = false;
   gameOver = false;
 
-  // HARD RESET GAME STATE
   score = 0;
   obstacles = [];
   spawnX = 0;
@@ -162,104 +119,20 @@ function showOverlayOnLoad() {
   player.y = 200;
 
   overlay.classList.remove("hidden");
-
-  // reset overlay UI
-  preview.textContent = "";
-  playBtn.classList.add("hidden");
 }
 
-// Run once on page load
 showOverlayOnLoad();
 
-
-
-teamButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    teamButtons.forEach(b => b.classList.remove("selected"));
-    btn.classList.add("selected");
-
-    selectedTeam = btn.dataset.team;
-    selectedId = null;
-
-    preview.textContent = "";
-    playBtn.classList.add("hidden");
-
-    idList.innerHTML = "";
-    idSection.classList.remove("hidden");
-
-    TEAM_IDS[selectedTeam].forEach(id => {
-      const b = document.createElement("button");
-
-      // label rules
-      if (selectedTeam === "Guest") b.textContent = "Guest";
-      else if (id === "A" || id === "B") b.textContent = `${id} (ALT)`;
-      else b.textContent = id;
-
-      b.addEventListener("click", () => {
-        [...idList.children].forEach(x => x.classList.remove("selected"));
-        b.classList.add("selected");
-
-        selectedId = id;
-        if (selectedTeam === "Guest") {
-  preview.textContent = "Guest";
-} else if (id === "A" || id === "B") {
-  preview.textContent = `${selectedTeam}-${id} (ALT)`;
-} else {
-  preview.textContent = `${selectedTeam}-${id}`;
-}
-        playBtn.classList.remove("hidden");
-      });
-
-      idList.appendChild(b);
-    });
-  });
-});
-
 playBtn.addEventListener("click", () => {
-  let pid;
+  runStartBest = bestScore;
 
-  if (selectedTeam === "Guest") {
-    pid = "Guest";
-  } else if (selectedId === "A" || selectedId === "B") {
-    pid = `${selectedTeam}-${selectedId} (ALT)`;
-  } else {
-    pid = `${selectedTeam}-${selectedId}`;
-  }
-
-  setPlayer(pid);      // ✅ ONLY place that saves + updates label
   hasPlayer = true;
-
-  player.vy = 0;
-  player.y = 200;
-
   overlay.classList.add("hidden");
-});
 
-
-/* =====================================================
-   CHANGE BUTTON
-===================================================== */
-changePlayerBtn.addEventListener("click", () => {
-  // show overlay
-  overlay.classList.remove("hidden");
-
-  // HARD RESET GAME STATE
-  hasPlayer = false;
-  started = false;
-  gameOver = false;
-
-  score = 0;
   player.vy = 0;
   player.y = 200;
-
-  obstacles = [];
-  spawnX = 0;
-  deathFade = 0;   // ← FIX
-
-  // reset overlay UI
-  preview.textContent = "";
-  playBtn.classList.add("hidden");
 });
+
 
 /* =====================================================
    GAME CONSTANTS (LOCKED)
@@ -679,85 +552,91 @@ if (!gameOver) {
     player.y += player.vy;
   }
 
-  // ================= OBSTACLES =================
-  if (started && !gameOver) {
-    if (
-      obstacles.length === 0 ||
-      spawnX - obstacles[obstacles.length - 1].x >= SPAWN_DISTANCE
-    ) {
-      spawnObstacle();
-    }
-  }
-
-  for (const obs of obstacles) {
-    if (!gameOver) obs.x -= SPEED;
-
-    drawObstacle(obs);
-
-    // scoring
-if (!obs.passed && obs.x + OB_W < player.x) {
-  obs.passed = true;
-  score++;
-  checkRankUnlock();
-
-  // speed increase every 50 points, cap at 3.5
-  const speedLevel = Math.floor(score / 50);
-
-  if (speedLevel > lastSpeedLevel && SPEED < 3.5) {
-    SPEED = Math.min(2.5 + speedLevel * 0.1, 3.5);
-    lastSpeedLevel = speedLevel;
-  }
-
-  if (score > bestScore) {
-    bestScore = score;
+// ================= OBSTACLES =================
+if (started && !gameOver) {
+  if (
+    obstacles.length === 0 ||
+    spawnX - obstacles[obstacles.length - 1].x >= SPAWN_DISTANCE
+  ) {
+    spawnObstacle();
   }
 }
 
-    // collision
-    const hitBox = {
-      x: player.x + 6,
-      y: player.y + 6,
-      w: player.w - 12,
-      h: player.h - 12
-    };
+for (const obs of obstacles) {
+  if (!gameOver) obs.x -= SPEED;
 
-    const inX =
-      hitBox.x < obs.x + OB_W &&
-      hitBox.x + hitBox.w > obs.x;
+  drawObstacle(obs);
 
-    if (!gameOver && inX) {
-      const hitsTop = hitBox.y < obs.gapY;
-      const hitsBottom =
-        hitBox.y + hitBox.h > obs.gapY + GAP;
+  // ===== scoring =====
+  if (!obs.passed && obs.x + OB_W < player.x) {
+    obs.passed = true;
+    score++;
+    checkRankUnlock();
 
-      if (hitsTop || hitsBottom) {
-if (!gameOver) {
-  gameOver = true;
-  const bestEver = saveScore();
-  saveBestOnline(bestEver);
-}
+    // speed increase every 50 points, cap at 3.5
+    const speedLevel = Math.floor(score / 50);
 
-      }
+    if (speedLevel > lastSpeedLevel && SPEED < 3.5) {
+      SPEED = Math.min(2.5 + speedLevel * 0.1, 3.5);
+      lastSpeedLevel = speedLevel;
+    }
+
+    if (score > bestScore) {
+      bestScore = score;
+      localStorage.setItem("bestScore", String(bestScore));
     }
   }
 
-  // remove obstacles that are far off-screen (prevents lag)
+  // ===== collision =====
+  const hitBox = {
+    x: player.x + 6,
+    y: player.y + 6,
+    w: player.w - 12,
+    h: player.h - 12
+  };
+
+  const inX =
+    hitBox.x < obs.x + OB_W &&
+    hitBox.x + hitBox.w > obs.x;
+
+  if (!gameOver && inX) {
+    const hitsTop = hitBox.y < obs.gapY;
+    const hitsBottom =
+      hitBox.y + hitBox.h > obs.gapY + GAP;
+
+    if (hitsTop || hitsBottom) {
+      gameOver = true;
+
+if (score > runStartBest) {
+  const name3 = askName3();
+  if (name3) {
+    saveBestOnlinePublic(name3, score);
+  }
+}
+
+    }
+  }
+}
+
+// remove obstacles that are far off-screen (prevents lag)
 obstacles = obstacles.filter(o => o.x > -OB_W - 100);
 
-  // ================= FLOOR / CEILING =================
-  if (!gameOver && hasPlayer) {
-    if (player.y < 0 || player.y + player.h > H) {
-if (!gameOver) {
-  gameOver = true;
-  const bestEver = saveScore();
-  saveBestOnline(bestEver);
+// ================= FLOOR / CEILING =================
+if (!gameOver && hasPlayer) {
+  if (player.y < 0 || player.y + player.h > H) {
+    gameOver = true;
+
+if (score > runStartBest) {
+  const name3 = askName3();
+  if (name3) {
+    saveBestOnlinePublic(name3, score);
+  }
 }
 
-
-    }
   }
+}
 
-   // death fade
+// ================= DEATH FADE =================
 if (gameOver && deathFade < 0.5) {
   deathFade += 0.01;
 }
@@ -811,6 +690,54 @@ drawBanner();
   }
 
   requestAnimationFrame(loop);
+}
+
+/* =====================================================
+   3-CHAR NAME PROMPT
+===================================================== */
+function askName3() {
+  const raw = prompt("ENTER NAME (3 chars: A–Z / 0–9)") || "";
+  const name = raw.toUpperCase().trim();
+
+  if (!/^[A-Z0-9]{3}$/.test(name)) {
+    alert("Use exactly 3 letters or numbers (A–Z, 0–9).");
+    return null;
+  }
+  return name;
+}
+
+/* =====================================================
+   PUBLIC DEVICE KEY
+===================================================== */
+let publicKey = localStorage.getItem("publicKey");
+if (!publicKey) {
+  publicKey = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now());
+  localStorage.setItem("publicKey", publicKey);
+}
+
+/* =====================================================
+   ONLINE SAVE (PUBLIC MODE)
+===================================================== */
+async function saveBestOnlinePublic(name3, scoreValue) {
+  try {
+    if (!auth.currentUser) await authReady;
+
+    const ref = doc(db, "scores_public", publicKey);
+    const snap = await getDoc(ref);
+    const prev = snap.exists() ? (snap.data().score || 0) : 0;
+
+    // only update if improved
+    if (scoreValue <= prev) return;
+
+    await setDoc(ref, {
+      name: name3,
+      score: scoreValue,
+      updatedAt: Date.now()
+    }, { merge: true });
+
+  } catch (err) {
+    console.error("saveBestOnlinePublic error:", err);
+  }
 }
 
 loop();
@@ -928,80 +855,5 @@ function spawnShootingStar() {
     vy: Math.random() * 2 + 1,
     life: 40 + Math.random() * 20
   });
-}
-
-/* =====================================================
-   SCORE SAVE
-===================================================== */
-
-function saveScore() {
-  const playerId = localStorage.getItem("playerId");
-  if (!playerId) return 0;
-
-  let board = JSON.parse(localStorage.getItem("scoreboard") || "[]");
-
-  const existing = board.find(e => e.id === playerId);
-
-  let bestEver = score;
-
-  if (existing) {
-    // update high score if beaten
-    if (score > existing.score) {
-      existing.score = score;
-    }
-
-    bestEver = existing.score;
-
-    // rank NEVER downgrades
-    existing.rank = getRankForScore(existing.score) || "—";
-
-  } else {
-    board.push({
-      id: playerId,
-      score: score,
-      rank: getRankForScore(score) || "—"
-    });
-
-    bestEver = score;
-  }
-
-  localStorage.setItem("scoreboard", JSON.stringify(board));
-  return bestEver;
-}
-
-
-
-// ================= ONLINE SAVE =================
-
-async function saveBestOnline(bestScore) {
-  const playerId = localStorage.getItem("playerId");
-  if (!playerId) return;
-
-  try {
-    // wait for anonymous auth
-    if (!auth.currentUser) {
-      await authReady;
-    }
-
-    const ref = doc(db, "scores", playerId);
-    const snap = await getDoc(ref);
-    const prev = snap.exists() ? (snap.data().score || 0) : 0;
-
-    // only update if improved
-    if (bestScore <= prev) return;
-
-    await setDoc(
-      ref,
-      {
-        id: playerId,
-        score: bestScore,
-        updatedAt: Date.now()
-      },
-      { merge: true }
-    );
-
-  } catch (err) {
-    console.error("saveBestOnline error:", err);
-  }
 }
 
