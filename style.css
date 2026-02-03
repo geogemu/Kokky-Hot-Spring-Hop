@@ -6,12 +6,16 @@ html, body {
 }
 
 body {
-  background: #02040b;
+  margin: 0;
+  background: #000814;                 /* match your sky bottom */
   font-family: "Handjet", sans-serif;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: center;             /* centers vertically */
+  height: 100dvh;                      /* real mobile height */
+  overflow: hidden;
   position: relative;
 }
 
@@ -65,13 +69,12 @@ body {
 /* Canvas */
 #game {
   display: block;
-  width: 100%;
-  max-width: 480px;
 
-  aspect-ratio: 2 / 3;   /* your real camera */
-  height: auto;
+  /* fit inside the phone WITHOUT cropping */
+  width: min(100vw, calc(100dvh * 2 / 3));
+  height: min(100dvh, calc(100vw * 3 / 2));
 
-  max-height: 100dvh;   /* mobile safe */
+  aspect-ratio: 2 / 3;
   touch-action: manipulation;
 }
 
