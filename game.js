@@ -766,7 +766,8 @@ if (!publicKey) {
 ===================================================== */
 async function saveBestOnlinePublic(name3, scoreValue) {
   try {
-    if (!auth.currentUser) await authReady;
+    await authReady;
+if (!auth.currentUser) throw new Error("No auth user; cannot write to scores_public.");
 
     const ref = doc(db, "scores_public", publicKey);
     const snap = await getDoc(ref);
