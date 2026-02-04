@@ -631,7 +631,7 @@ for (const obs of obstacles) {
     if (hitsTop || hitsBottom) {
       gameOver = true;
 
-if (score > runStartBest && !submittedThisDeath) {
+if (score > 0 && !submittedThisDeath) {
   submittedThisDeath = true;
   askName3().then(name3 => {
     saveBestOnlinePublic(name3, score);
@@ -650,7 +650,7 @@ if (!gameOver && hasPlayer) {
   if (player.y < 0 || player.y + player.h > H) {
     gameOver = true;
 
-if (score > runStartBest && !submittedThisDeath) {
+if (score > 0 && !submittedThisDeath) {
   submittedThisDeath = true;
   askName3().then(name3 => {
     saveBestOnlinePublic(name3, score);
