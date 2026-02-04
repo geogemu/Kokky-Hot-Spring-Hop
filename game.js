@@ -1,4 +1,4 @@
-import { db, auth, authReady } from "./firebase-init.js";
+import { db } from "./firebase-init.js?v=20260204d";
 
 import {
   doc,
@@ -779,12 +779,11 @@ function askName3() {
 ===================================================== */
 async function saveBestOnlinePublic(name3, scoreValue) {
   try {
-    await authReady;
-    if (!auth.currentUser) throw new Error("No auth user; cannot write to scores_public.");
-
     const ref = doc(db, "scores_public", publicKey);
+
+    // ALWAYS server check so we don't compare against stale cache
     const snap = await getDocFromServer(ref);
-    const prev = snap.exists() ? (snap.data().score || 0) : 0;
+    const prev = snap.exists() ? (Number(snap.data().score) || 0) : 0;
 
     // only update if improved
     if (scoreValue <= prev) return;
@@ -795,14 +794,8 @@ async function saveBestOnlinePublic(name3, scoreValue) {
       updatedAt: Date.now()
     }, { merge: true });
 
-    // TEMP: confirm success on iPhone
-    alert(`✅ Online save OK: ${name3} ${scoreValue}`);
-
   } catch (err) {
     console.error("saveBestOnlinePublic error:", err);
-
-    // TEMP: show real failure reason on iPhone
-    alert(`❌ Online save FAILED: ${err.message || err}`);
   }
 }
 
