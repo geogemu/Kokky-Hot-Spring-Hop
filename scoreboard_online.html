@@ -286,6 +286,12 @@ try {
   snap = await getDocs(q);
 }
 
+  if (snap.empty) {
+  const tbody = document.querySelector("#scoreTable tbody");
+  tbody.innerHTML = `<tr><td colspan="4">Can’t reach server. Try again.</td></tr>`;
+  return;
+}
+
 const tbody = document.querySelector("#scoreTable tbody");
 tbody.innerHTML = "";
 
