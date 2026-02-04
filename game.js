@@ -632,9 +632,11 @@ if (score > runStartBest && !submittedThisDeath) {
 
   const finalScore = score;
 
-  askName3().then(name3 => {
-    saveBestOnlinePublic(name3, finalScore);
-  });
+  askName3().then(async (name3) => {
+  const ok = await saveBestOnlinePublic(name3, finalScore);
+  if (ok) document.getElementById("nameModal").classList.add("hidden");
+});
+
 }
 
     }
@@ -653,8 +655,9 @@ if (score > runStartBest && !submittedThisDeath) {
   submittedThisDeath = true;
 const finalScore = score;
 
-askName3().then(name3 => {
-  saveBestOnlinePublic(name3, finalScore);
+askName3().then(async (name3) => {
+  const ok = await saveBestOnlinePublic(name3, finalScore);
+  if (ok) document.getElementById("nameModal").classList.add("hidden");
 });
 }
 
@@ -747,7 +750,6 @@ function askName3() {
       }
 
       // success
-      modal.classList.add("hidden");
       err.classList.add("hidden");
 
       // remove listeners to avoid duplicates
@@ -785,8 +787,10 @@ async function saveBestOnlinePublic(name3, scoreValue) {
       score: scoreValue,
       updatedAt: Date.now()
     });
+    return true;
   } catch (err) {
     alert(err?.message || String(err));
+    return false;
   }
 }
 
