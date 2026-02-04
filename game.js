@@ -654,7 +654,7 @@ if (!gameOver && hasPlayer) {
   if (player.y < 0 || player.y + player.h > H) {
     gameOver = true;
 
-if (score > 0 && !submittedThisDeath) {
+if (score > runStartBest && !submittedThisDeath) {
   submittedThisDeath = true;
 const finalScore = score;
 
