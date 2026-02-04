@@ -787,22 +787,15 @@ async function saveBestOnlinePublic(name3, scoreValue) {
   try {
     const ref = doc(db, "scores_public", publicKey);
 
-    // ALWAYS server check so we don't compare against stale cache
-    const snap = await getDocFromServer(ref);
-    const prev = snap.exists() ? (Number(snap.data().score) || 0) : 0;
-
-    // only update if improved
-    if (scoreValue <= prev) return;
-
     await setDoc(ref, {
       name: name3,
       score: scoreValue,
       updatedAt: Date.now()
     }, { merge: true });
 
-} catch (err) {
-  alert(err?.message || String(err));
-}
+  } catch (err) {
+    alert(err?.message || String(err));
+  }
 }
 
 loop();
