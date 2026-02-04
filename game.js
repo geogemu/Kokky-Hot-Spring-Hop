@@ -794,9 +794,9 @@ async function saveBestOnlinePublic(name3, scoreValue) {
       updatedAt: Date.now()
     }, { merge: true });
 
-  } catch (err) {
-    console.error("saveBestOnlinePublic error:", err);
-  }
+} catch (err) {
+  alert(err?.message || String(err));
+}
 }
 
 loop();
