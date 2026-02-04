@@ -1,4 +1,4 @@
-import { db } from "./firebase-init.js?v=20260204d";
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
 import {
   doc,
@@ -785,14 +785,11 @@ function askName3() {
 ===================================================== */
 async function saveBestOnlinePublic(name3, scoreValue) {
   try {
-    const ref = doc(db, "scores_public", publicKey);
-
-    await setDoc(ref, {
+    await addDoc(collection(db, "scores_public"), {
       name: name3,
       score: scoreValue,
       updatedAt: Date.now()
-    }, { merge: true });
-
+    });
   } catch (err) {
     alert(err?.message || String(err));
   }
