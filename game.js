@@ -148,6 +148,7 @@ showOverlayOnLoad();
 
 playBtn.addEventListener("click", () => {
   runStartBest = bestScore;
+  submittedThisDeath = false;
 
   hasPlayer = true;
   overlay.classList.add("hidden");
