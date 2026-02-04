@@ -175,7 +175,7 @@ td {
 
 <script type="module">
 /* ===== FIREBASE ===== */
-import { db, authReady } from "./firebase-init.js?v=20260204d";
+import { db } from "./firebase-init.js?v=20260204d";
 import {
   collection,
   query,
@@ -264,7 +264,6 @@ if (isAdminMode) exportBtn.style.display = "block";
 
 /* ===== LOAD ONLINE SCORES (TOP 15) ===== */
 async function loadOnlineScores() {
-  await authReady;
 
  // IMPORTANT: public mode collection
 const q = query(
@@ -310,7 +309,6 @@ loadOnlineScores();
 /* ===== EXPORT CSV (ADMIN ONLY) ===== */
 if (isAdminMode) {
   exportBtn.addEventListener("click", async () => {
-    await authReady;
 
     const qAll = query(
       collection(db, "scores_public"),
