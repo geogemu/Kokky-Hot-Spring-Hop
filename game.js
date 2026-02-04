@@ -631,14 +631,14 @@ for (const obs of obstacles) {
     if (hitsTop || hitsBottom) {
       gameOver = true;
 
-if (score > 0 && !submittedThisDeath) {
+if (score > runStartBest && !submittedThisDeath) {
   submittedThisDeath = true;
-const finalScore = score;
 
-askName3().then(name3 => {
-  saveBestOnlinePublic(name3, finalScore);
-});
+  const finalScore = score;
 
+  askName3().then(name3 => {
+    saveBestOnlinePublic(name3, finalScore);
+  });
 }
 
     }
