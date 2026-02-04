@@ -324,7 +324,7 @@ if (isAdminMode) {
     });
 
     const csv = [
-      ["rank","publicKey","name","score","updatedAt"].join(","),
+      ["rank","docId","name","score","updatedAt"].join(","),
       ...all.map((r, idx) => {
         const key = String(r.key || "");
         const name = String(r.name || "");
