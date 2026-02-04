@@ -186,7 +186,8 @@ import {
   query,
   orderBy,
   limit,
-  getDocsFromServer
+  getDocsFromServer,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
 
@@ -278,7 +279,12 @@ const q = query(
 );
 
 // FORCE server fetch (no cached results)
-const snap = await getDocsFromServer(q);
+let snap;
+try {
+  snap = await getDocsFromServer(q);
+} catch (e) {
+  snap = await getDocs(q);
+}
 
 const tbody = document.querySelector("#scoreTable tbody");
 tbody.innerHTML = "";
