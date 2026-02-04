@@ -1,11 +1,5 @@
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-import {
-  doc,
-  getDocFromServer,
-  setDoc
-} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
 // ===== SAFE LOCALSTORAGE HELPERS (PASTE HERE) =====
 function safeGet(key, fallback = null) {
   try { return localStorage.getItem(key) ?? fallback; }
