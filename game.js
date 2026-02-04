@@ -633,9 +633,12 @@ for (const obs of obstacles) {
 
 if (score > 0 && !submittedThisDeath) {
   submittedThisDeath = true;
-  askName3().then(name3 => {
-    saveBestOnlinePublic(name3, score);
-  });
+const finalScore = score;
+
+askName3().then(name3 => {
+  saveBestOnlinePublic(name3, finalScore);
+});
+
 }
 
     }
@@ -652,9 +655,11 @@ if (!gameOver && hasPlayer) {
 
 if (score > 0 && !submittedThisDeath) {
   submittedThisDeath = true;
-  askName3().then(name3 => {
-    saveBestOnlinePublic(name3, score);
-  });
+const finalScore = score;
+
+askName3().then(name3 => {
+  saveBestOnlinePublic(name3, finalScore);
+});
 }
 
   }
