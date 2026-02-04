@@ -1,3 +1,4 @@
+import { db } from "./firebase-init.js?v=20260204d";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
 // ===== SAFE LOCALSTORAGE HELPERS (PASTE HERE) =====
